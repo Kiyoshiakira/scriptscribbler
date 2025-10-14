@@ -1767,7 +1767,6 @@
                 }
             });
         }
-        }
 
         // Import Modal Functions
         function openImportModal() {
@@ -1912,7 +1911,34 @@
         }
 
         function openAbout() {
-            showNotification('Script Scribbler v1.0 - A professional screenwriting application for writers.');
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            const ctrlKey = isMac ? 'Cmd' : 'Ctrl';
+            const message = `Script Scribbler v2.0 - A professional screenwriting application
+
+Keyboard Shortcuts:
+• ${ctrlKey}+Z: Undo
+• ${ctrlKey}+Shift+Z or ${ctrlKey}+Y: Redo
+• ${ctrlKey}+S: Save
+• ${ctrlKey}+F: Search
+• ${ctrlKey}+E: Export
+• ${ctrlKey}+,: Preferences
+• ${ctrlKey}+1-5: Switch tabs
+• Tab: Change block type
+• Enter: New line/block
+• ↑/↓: Navigate blocks
+
+Features:
+✓ Undo/Redo support
+✓ Auto-save every 30 seconds
+✓ Resizable sidebar
+✓ Drag-and-drop scene reordering
+✓ Visual block type indicators
+✓ Note pinning and scene linking
+✓ Enhanced search with highlighting
+✓ Keyboard navigation
+✓ Customizable preferences`;
+            
+            alert(message);
             document.getElementById('optionsMenu').classList.remove('show');
         }
 
