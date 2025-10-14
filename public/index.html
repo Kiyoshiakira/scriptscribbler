@@ -77,6 +77,85 @@
         </div>
     </div>
 
+    <!-- Search Modal -->
+    <div class="export-modal" id="searchModal" style="display: none;">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">🔍 Search Project</h2>
+                <button class="close-modal-btn" onclick="closeSearchModal()">✕</button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search scenes, notes, characters..." oninput="performSearch()">
+                <div class="search-filters">
+                    <button class="filter-btn active" onclick="setSearchFilter('all')">All</button>
+                    <button class="filter-btn" onclick="setSearchFilter('scenes')">Scenes</button>
+                    <button class="filter-btn" onclick="setSearchFilter('notes')">Notes</button>
+                    <button class="filter-btn" onclick="setSearchFilter('characters')">Characters</button>
+                </div>
+                <div class="search-results" id="searchResults">
+                    <p style="text-align: center; color: #94a3b8; padding: 40px;">Enter a search term to find content across your project</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="export-modal" id="importModal" style="display: none;">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">📥 Import Project</h2>
+                <button class="close-modal-btn" onclick="closeImportModal()">✕</button>
+            </div>
+
+            <div class="import-container">
+                <div class="import-dropzone" id="importDropzone">
+                    <div class="import-icon">📁</div>
+                    <h3>Drop JSON file here or click to browse</h3>
+                    <p>Import a previously exported Script Scribbler project</p>
+                    <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="handleImportFile(event)">
+                    <button class="btn btn-primary" onclick="document.getElementById('importFileInput').click()">Choose File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Settings Modal -->
+    <div class="export-modal" id="themeModal" style="display: none;">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">🎨 Theme Settings</h2>
+                <button class="close-modal-btn" onclick="closeThemeModal()">✕</button>
+            </div>
+
+            <div class="theme-container">
+                <div class="theme-options">
+                    <div class="theme-option" onclick="setTheme('light')" data-theme="light">
+                        <div class="theme-preview light">
+                            <div class="preview-bar"></div>
+                            <div class="preview-content"></div>
+                        </div>
+                        <div class="theme-name">Light</div>
+                    </div>
+                    <div class="theme-option active" onclick="setTheme('default')" data-theme="default">
+                        <div class="theme-preview default">
+                            <div class="preview-bar"></div>
+                            <div class="preview-content"></div>
+                        </div>
+                        <div class="theme-name">Default (Purple)</div>
+                    </div>
+                    <div class="theme-option" onclick="setTheme('dark')" data-theme="dark">
+                        <div class="theme-preview dark">
+                            <div class="preview-bar"></div>
+                            <div class="preview-content"></div>
+                        </div>
+                        <div class="theme-name">Dark</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Top Navigation Bar -->
         <div class="header">
@@ -92,6 +171,14 @@
                 <div class="options-dropdown">
                     <button class="options-cog" onclick="toggleOptionsMenu()">⚙️</button>
                     <div class="options-menu" id="optionsMenu">
+                        <div class="options-menu-item" onclick="openSearchModal()">
+                            <span class="icon">🔍</span>
+                            <span>Search Project</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openImportModal()">
+                            <span class="icon">📥</span>
+                            <span>Import Project</span>
+                        </div>
                         <div class="options-menu-item" onclick="openThemeSettings()">
                             <span class="icon">🎨</span>
                             <span>Theme Settings</span>

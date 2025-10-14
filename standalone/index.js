@@ -1045,9 +1045,213 @@
             menu.classList.toggle('show');
         }
 
-        function openThemeSettings() {
-            showNotification('Theme settings coming soon!');
+        // Search Modal Functions
+        let searchFilter = 'all';
+
+        function openSearchModal() {
+            document.getElementById('searchModal').style.display = 'flex';
             document.getElementById('optionsMenu').classList.remove('show');
+            setTimeout(() => document.getElementById('searchInput').focus(), 100);
+        }
+
+        function closeSearchModal() {
+            document.getElementById('searchModal').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">Enter a search term to find content across your project</p>';
+        }
+
+        function setSearchFilter(filter) {
+            searchFilter = filter;
+            document.querySelectorAll('.search-filters .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            performSearch();
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (!query) {
+                resultsContainer.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">Enter a search term to find content across your project</p>';
+                return;
+            }
+            
+            let results = [];
+            
+            // Search scenes
+            if (searchFilter === 'all' || searchFilter === 'scenes') {
+                sceneScripts.forEach((sceneData, index) => {
+                    sceneData.forEach(block => {
+                        if (block.text && block.text.toLowerCase().includes(query)) {
+                            results.push({
+                                type: 'Scene',
+                                title: `Scene ${index + 1}`,
+                                preview: block.text.substring(0, 100) + '...',
+                                action: () => selectSceneFromBoard(index)
+                            });
+                        }
+                    });
+                });
+            }
+            
+            // Search notes
+            if (searchFilter === 'all' || searchFilter === 'notes') {
+                notes.forEach((note, index) => {
+                    const searchableText = (note.title + ' ' + JSON.stringify(note)).toLowerCase();
+                    if (searchableText.includes(query)) {
+                        results.push({
+                            type: 'Note',
+                            title: note.title,
+                            preview: note.title,
+                            action: () => {
+                                closeSearchModal();
+                                switchMainTab('notes');
+                                selectNote(index);
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Search characters
+            if (searchFilter === 'all' || searchFilter === 'characters') {
+                extractCharactersFromScript();
+                characters.forEach(char => {
+                    if (char.name.toLowerCase().includes(query)) {
+                        results.push({
+                            type: 'Character',
+                            title: char.name,
+                            preview: `Appears in ${char.scenes} scene(s)`,
+                            action: () => {
+                                closeSearchModal();
+                                switchMainTab('characters');
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Display results
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">No results found</p>';
+            } else {
+                resultsContainer.innerHTML = results.map(result => `
+                    <div class="search-result-item" onclick="(${result.action.toString()})()">
+                        <span class="search-result-type">${result.type}</span>
+                        <div class="search-result-title">${result.title}</div>
+                        <div class="search-result-preview">${result.preview}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Import Modal Functions
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
+            document.getElementById('optionsMenu').classList.remove('show');
+            setupImportDropzone();
+        }
+
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+
+        function setupImportDropzone() {
+            const dropzone = document.getElementById('importDropzone');
+            
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+            
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('dragover');
+            });
+            
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    importProjectFromFile(files[0]);
+                }
+            });
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                importProjectFromFile(file);
+            }
+        }
+
+        function importProjectFromFile(file) {
+            if (!file.name.endsWith('.json')) {
+                showNotification('Please select a valid JSON file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const projectData = JSON.parse(e.target.result);
+                    
+                    // Import scenes
+                    if (projectData.scenes) {
+                        sceneScripts = projectData.scenes;
+                        rebuildSceneList();
+                        loadSceneIntoEditor(0);
+                    }
+                    
+                    // Import notes
+                    if (projectData.notes) {
+                        notes = projectData.notes;
+                        updateNotesList();
+                    }
+                    
+                    closeImportModal();
+                    showNotification('Project imported successfully!');
+                    switchMainTab('script');
+                } catch (error) {
+                    showNotification('Error importing project: Invalid file format');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Theme Modal Functions
+        let currentTheme = 'default';
+
+        function openThemeSettings() {
+            document.getElementById('themeModal').style.display = 'flex';
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function closeThemeModal() {
+            document.getElementById('themeModal').style.display = 'none';
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+            event.target.closest('.theme-option').classList.add('active');
+            
+            const body = document.body;
+            body.className = ''; // Remove all theme classes
+            
+            if (theme === 'light') {
+                body.style.background = '#f8fafc';
+            } else if (theme === 'dark') {
+                body.style.background = '#0f172a';
+                // In a full implementation, we'd also update text colors, etc.
+            } else {
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+            
+            showNotification(`Theme changed to ${theme}`);
         }
 
         function openPreferences() {

@@ -1356,4 +1356,199 @@
             font-weight: 600;
             color: #1e293b;
         }
+
+        /* Search Modal Styles */
+        .search-container {
+            padding: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-result-item:hover {
+            border-color: #4f46e5;
+            background: #f8fafc;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .search-result-type {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e0e7ff;
+            color: #4f46e5;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 8px;
+        }
+
+        .search-result-preview {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* Import Modal Styles */
+        .import-container {
+            padding: 20px;
+        }
+
+        .import-dropzone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .import-dropzone:hover {
+            border-color: #4f46e5;
+            background: #f8fafc;
+        }
+
+        .import-dropzone.dragover {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .import-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .import-dropzone h3 {
+            font-size: 18px;
+            color: #1e293b;
+            margin: 0 0 8px 0;
+        }
+
+        .import-dropzone p {
+            color: #64748b;
+            margin: 0 0 20px 0;
+        }
+
+        /* Theme Modal Styles */
+        .theme-container {
+            padding: 20px;
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .theme-option {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-option:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .theme-option.active {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .theme-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .theme-preview.light {
+            background: #ffffff;
+        }
+
+        .theme-preview.light .preview-bar {
+            background: #f1f5f9;
+            height: 30px;
+        }
+
+        .theme-preview.light .preview-content {
+            background: #f8fafc;
+            height: 90px;
+        }
+
+        .theme-preview.default {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .theme-preview.default .preview-bar {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            height: 30px;
+        }
+
+        .theme-preview.default .preview-content {
+            background: #ffffff;
+            height: 90px;
+        }
+
+        .theme-preview.dark {
+            background: #1e293b;
+        }
+
+        .theme-preview.dark .preview-bar {
+            background: #0f172a;
+            height: 30px;
+        }
+
+        .theme-preview.dark .preview-content {
+            background: #334155;
+            height: 90px;
+        }
+
+        .theme-name {
+            text-align: center;
+            font-weight: 600;
+            color: #1e293b;
+        }
     </style>
