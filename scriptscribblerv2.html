@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptCraft - Collaborative Script Editor</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .integration-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .integration-badge {
+            background: #10b981;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .export-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .export-btn:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scene-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .scene-item {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .scene-item:hover {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .scene-item.active {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+        }
+
+        .scene-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .scene-location {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .add-scene-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f8fafc;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #64748b;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .add-scene-btn:hover {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .integration-panel {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .integration-title {
+            font-weight: 600;
+            color: #0369a1;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .integration-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .integration-option {
+            background: white;
+            border: 1px solid #e0f2fe;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .integration-option:hover {
+            background: #f0f9ff;
+            border-color: #0369a1;
+        }
+
+        .editor-container {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-toolbar {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .format-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .toolbar-info {
+            margin-left: auto;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .editor {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #fefefe;
+            min-height: 500px;
+        }
+
+        .script-line {
+            margin-bottom: 12px;
+            min-height: 20px;
+            position: relative;
+        }
+
+        .script-line.scene-heading {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        .script-line.action {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .script-line.character {
+            margin-left: 220px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .script-line.dialogue {
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+
+        .script-line.parenthetical {
+            margin-left: 160px;
+            margin-right: 120px;
+            font-style: italic;
+        }
+
+        .script-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            resize: none;
+            overflow: hidden;
+            padding: 2px 0;
+        }
+
+        .script-input:focus {
+            background: rgba(79, 70, 229, 0.05);
+            border-radius: 4px;
+            padding: 2px 4px;
+        }
+
+        .export-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .export-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .export-modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .export-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .export-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 4px;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .export-option {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .export-option:hover {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .export-option.selected {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+        }
+
+        .export-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .export-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .export-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .export-settings {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .setting-group {
+            margin-bottom: 16px;
+        }
+
+        .setting-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .status-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .status-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .status-notification.error {
+            background: #ef4444;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+
+            .script-line.character {
+                margin-left: 120px;
+            }
+
+            .script-line.dialogue {
+                margin-left: 60px;
+                margin-right: 60px;
+            }
+
+            .script-line.parenthetical {
+                margin-left: 80px;
+                margin-right: 80px;
+            }
+
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Notification -->
+    <div class="status-notification" id="statusNotification">
+        <span id="statusText">Success!</span>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="export-modal" id="exportModal">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">🚀 Export & Integrate</h2>
+                <button class="close-modal-btn" onclick="closeExportModal()">✕</button>
+            </div>
+
+            <div class="export-options">
+                <div class="export-option" onclick="selectExportType('collaborative')" data-type="collaborative">
+                    <span class="export-icon">👥</span>
+                    <div class="export-title">Collaborative Platform</div>
+                    <div class="export-desc">Export for team collaboration</div>
+                </div>
+                <div class="export-option" onclick="selectExportType('production')" data-type="production">
+                    <span class="export-icon">🎬</span>
+                    <div class="export-title">Production Ready</div>
+                    <div class="export-desc">Format for filming/recording</div>
+                </div>
+                <div class="export-option" onclick="selectExportType('development')" data-type="development">
+                    <span class="export-icon">🛠️</span>
+                    <div class="export-title">Development Tools</div>
+                    <div class="export-desc">Integrate with dev software</div>
+                </div>
+                <div class="export-option" onclick="selectExportType('sharing')" data-type="sharing">
+                    <span class="export-icon">🔗</span>
+                    <div class="export-title">Easy Sharing</div>
+                    <div class="export-desc">Web-friendly formats</div>
+                </div>
+            </div>
+
+            <div class="export-settings" id="exportSettings">
+                <div class="setting-group">
+                    <label class="setting-label">Project Title</label>
+                    <input type="text" class="setting-input" id="projectTitle" value="My Screenplay" placeholder="Enter project title">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Export Format</label>
+                    <select class="setting-input" id="exportFormat">
+                        <option value="json">JSON (API Integration)</option>
+                        <option value="xml">XML (Universal)</option>
+                        <option value="fountain">Fountain (Plain Text)</option>
+                        <option value="pdf">PDF (Presentation)</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Integration Target</label>
+                    <select class="setting-input" id="integrationTarget">
+                        <option value="generic">Generic Platform</option>
+                        <option value="github">GitHub Repository</option>
+                        <option value="google-drive">Google Drive</option>
+                        <option value="dropbox">Dropbox</option>
+                        <option value="slack">Slack Workspace</option>
+                        <option value="discord">Discord Server</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="export-actions">
+                <button class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="performExport()">Export & Integrate</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎬 ScriptCraft</div>
+            <div class="integration-info">
+                <span class="integration-badge">Integration Ready</span>
+                <button class="export-btn" onclick="openExportModal()">🚀 Export & Integrate</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="section-title">📝 Scenes</h3>
+                    <div class="scene-list" id="sceneList">
+                        <div class="scene-item active" onclick="selectScene(0)">
+                            <div class="scene-title">Scene 1</div>
+                            <div class="scene-location">INT. COFFEE SHOP - DAY</div>
+                        </div>
+                        <div class="scene-item" onclick="selectScene(1)">
+                            <div class="scene-title">Scene 2</div>
+                            <div class="scene-location">EXT. PARK - AFTERNOON</div>
+                        </div>
+                    </div>
+                    <button class="add-scene-btn" onclick="addNewScene()">+ Add Scene</button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">🔗 Quick Integration</h3>
+                    <div class="integration-panel">
+                        <div class="integration-title">Ready to collaborate?</div>
+                        <div class="integration-options">
+                            <div class="integration-option" onclick="quickIntegration('film')">
+                                🎬 Film Production
+                            </div>
+                            <div class="integration-option" onclick="quickIntegration('game')">
+                                🎮 Game Development
+                            </div>
+                            <div class="integration-option" onclick="quickIntegration('animation')">
+                                🎨 Animation Studio
+                            </div>
+                            <div class="integration-option" onclick="quickIntegration('audio')">
+                                🎵 Audio Production
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-toolbar">
+                    <select class="format-select" id="formatSelect" onchange="changeFormat()">
+                        <option value="action">Action</option>
+                        <option value="scene-heading">Scene Heading</option>
+                        <option value="character">Character</option>
+                        <option value="dialogue">Dialogue</option>
+                        <option value="parenthetical">Parenthetical</option>
+                    </select>
+                    <div class="toolbar-info">
+                        <span id="wordCount">247 words</span> • 
+                        <span id="pageCount">2 pages</span> • 
+                        <span>Integration ready</span>
+                    </div>
+                </div>
+
+                <div class="editor" id="editor">
+                    <div class="script-line scene-heading">
+                        <textarea class="script-input" placeholder="INT. COFFEE SHOP - DAY" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">INT. COFFEE SHOP - DAY</textarea>
+                    </div>
+                    <div class="script-line action">
+                        <textarea class="script-input" placeholder="Describe the action..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">SARAH, a young writer in her twenties, sits at a corner table typing furiously on her laptop. Steam rises from her untouched coffee.</textarea>
+                    </div>
+                    <div class="script-line character">
+                        <textarea class="script-input" placeholder="CHARACTER NAME" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">SARAH</textarea>
+                    </div>
+                    <div class="script-line dialogue">
+                        <textarea class="script-input" placeholder="Character dialogue..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">This story isn't working. I need something more... authentic.</textarea>
+                    </div>
+                    <div class="script-line action">
+                        <textarea class="script-input" placeholder="Describe the action..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">She stares at the screen, frustrated. The cursor blinks mockingly at the end of an incomplete sentence.</textarea>
+                    </div>
+                    <div class="script-line scene-heading">
+                        <textarea class="script-input" placeholder="EXT. PARK - AFTERNOON" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">EXT. PARK - AFTERNOON</textarea>
+                    </div>
+                    <div class="script-line action">
+                        <textarea class="script-input" placeholder="Describe the action..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">Sarah walks through the park, phone pressed to her ear. She looks determined but nervous.</textarea>
+                    </div>
+                    <div class="script-line character">
+                        <textarea class="script-input" placeholder="CHARACTER NAME" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">SARAH</textarea>
+                    </div>
+                    <div class="script-line dialogue">
+                        <textarea class="script-input" placeholder="Character dialogue..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">Marcus, I know this sounds crazy, but I think I found our story.</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScene = 0;
+        let selectedExportType = null;
+        
+        let scenes = [
+            { title: "Scene 1", location: "INT. COFFEE SHOP - DAY" },
+            { title: "Scene 2", location: "EXT. PARK - AFTERNOON" }
+        ];
+
+        // Auto-resize textarea function
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // Handle keyboard navigation
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const currentLine = event.target.closest('.script-line');
+                const newLine = createNewLine('action');
+                currentLine.parentNode.insertBefore(newLine, currentLine.nextSibling);
+                newLine.querySelector('.script-input').focus();
+            } else if (event.key === 'Tab') {
+                event.preventDefault();
+                cycleFormat(event.target.closest('.script-line'));
+            }
+        }
+
+        // Create new script line
+        function createNewLine(format) {
+            const line = document.createElement('div');
+            line.className = `script-line ${format}`;
+            line.innerHTML = `<textarea class="script-input" placeholder="${getPlaceholder(format)}" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()"></textarea>`;
+            return line;
+        }
+
+        // Get placeholder text for format
+        function getPlaceholder(format) {
+            const placeholders = {
+                'scene-heading': 'INT./EXT. LOCATION - TIME',
+                'action': 'Describe the action...',
+                'character': 'CHARACTER NAME',
+                'dialogue': 'Character dialogue...',
+                'parenthetical': '(direction)'
+            };
+            return placeholders[format] || 'Enter text...';
+        }
+
+        // Cycle through formats with Tab
+        function cycleFormat(line) {
+            const formats = ['action', 'scene-heading', 'character', 'dialogue', 'parenthetical'];
+            const currentFormat = getCurrentFormat(line);
+            const currentIndex = formats.indexOf(currentFormat);
+            const nextIndex = (currentIndex + 1) % formats.length;
+            const nextFormat = formats[nextIndex];
+            
+            line.className = `script-line ${nextFormat}`;
+            line.querySelector('.script-input').placeholder = getPlaceholder(nextFormat);
+        }
+
+        // Get current format of line
+        function getCurrentFormat(line) {
+            const classes = line.className.split(' ');
+            return classes.find(cls => cls !== 'script-line') || 'action';
+        }
+
+        // Change format from dropdown
+        function changeFormat() {
+            const select = document.getElementById('formatSelect');
+            const focusedInput = document.activeElement;
+            if (focusedInput && focusedInput.classList.contains('script-input')) {
+                const line = focusedInput.closest('.script-line');
+                line.className = `script-line ${select.value}`;
+                focusedInput.placeholder = getPlaceholder(select.value);
+            }
+        }
+
+        // Scene management
+        function selectScene(index) {
+            currentScene = index;
+            document.querySelectorAll('.scene-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+
+        function addNewScene() {
+            const sceneNumber = scenes.length + 1;
+            const newScene = {
+                title: `Scene ${sceneNumber}`,
+                location: "INT./EXT. LOCATION - TIME"
+            };
+            scenes.push(newScene);
+            
+            const sceneList = document.getElementById('sceneList');
+            const sceneItem = document.createElement('div');
+            sceneItem.className = 'scene-item';
+            sceneItem.onclick = () => selectScene(scenes.length - 1);
+            sceneItem.innerHTML = `
+                <div class="scene-title">${newScene.title}</div>
+                <div class="scene-location">${newScene.location}</div>
+            `;
+            sceneList.appendChild(sceneItem);
+            
+            // Add new scene heading to editor
+            const editor = document.getElementById('editor');
+            const newSceneLine = createNewLine('scene-heading');
+            newSceneLine.querySelector('.script-input').value = newScene.location;
+            editor.appendChild(newSceneLine);
+            
+            showNotification('New scene added!');
+        }
+
+        // Quick integration functions
+        function quickIntegration(type) {
+            const integrationMessages = {
+                film: 'Script formatted for film production workflow',
+                game: 'Script prepared for game development integration',
+                animation: 'Script optimized for animation pipeline',
+                audio: 'Script formatted for audio production'
+            };
+            
+            showNotification(integrationMessages[type]);
+            
+            // Simulate integration preparation
+            setTimeout(() => {
+                openExportModal();
+                selectExportType('collaborative');
+            }, 1000);
+        }
+
+        // Export modal functions
+        function openExportModal() {
+            const modal = document.getElementById('exportModal');
+            modal.classList.add('show');
+        }
+
+        function closeExportModal() {
+            const modal = document.getElementById('exportModal');
+            modal.classList.remove('show');
+            selectedExportType = null;
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+
+        function selectExportType(type) {
+            selectedExportType = type;
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+        }
+
+        function performExport() {
+            if (!selectedExportType) {
+                showNotification('Please select an export type', true);
+                return;
+            }
+            
+            const projectTitle = document.getElementById('projectTitle').value;
+            const exportFormat = document.getElementById('exportFormat').value;
+            const integrationTarget = document.getElementById('integrationTarget').value;
+            
+            // Collect script data
+            const scriptData = collectScriptData();
+            
+            // Create export package
+            const exportPackage = {
+                metadata: {
+                    title: projectTitle,
+                    exportType: selectedExportType,
+                    format: exportFormat,
+                    target: integrationTarget,
+                    exportedAt: new Date().toISOString(),
+                    version: "1.0"
+                },
+                script: scriptData,
+                integration: {
+                    apiEndpoint: generateAPIEndpoint(),
+                    webhookUrl: generateWebhookUrl(),
+                    collaborationId: generateCollaborationId()
+                }
+            };
+            
+            // Simulate export process
+            showNotification('Preparing export...');
+            
+            setTimeout(() => {
+                downloadExport(exportPackage, exportFormat);
+                showNotification(`Successfully exported for ${integrationTarget}!`);
+                closeExportModal();
+            }, 2000);
+        }
+
+        // Collect script data from editor
+        function collectScriptData() {
+            const lines = [];
+            document.querySelectorAll('.script-line').forEach(line => {
+                const textarea = line.querySelector('.script-input');
+                const format = getCurrentFormat(line);
+                const content = textarea.value.trim();
+                
+                if (content) {
+                    lines.push({
+                        format: format,
+                        content: content
+                    });
+                }
+            });
+            
+            return {
+                scenes: scenes,
+                lines: lines,
+                statistics: calculateStats()
+            };
+        }
+
+        // Generate integration endpoints
+        function generateAPIEndpoint() {
+            return `https://api.scriptcraft.app/v1/projects/${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        function generateWebhookUrl() {
+            return `https://hooks.scriptcraft.app/collaboration/${Math.random().toString(36).substr(2, 12)}`;
+        }
+
+        function generateCollaborationId() {
+            return Math.random().toString(36).substr(2, 16);
+        }
+
+        // Download export file
+        function downloadExport(data, format) {
+            let content, filename, mimeType;
+            
+            switch (format) {
+                case 'json':
+                    content = JSON.stringify(data, null, 2);
+                    filename = `${data.metadata.title.replace(/\s+/g, '_')}.json`;
+                    mimeType = 'application/json';
+                    break;
+                case 'xml':
+                    content = convertToXML(data);
+                    filename = `${data.metadata.title.replace(/\s+/g, '_')}.xml`;
+                    mimeType = 'application/xml';
+                    break;
+                case 'fountain':
+                    content = convertToFountain(data.script);
+                    filename = `${data.metadata.title.replace(/\s+/g, '_')}.fountain`;
+                    mimeType = 'text/plain';
+                    break;
+                case 'pdf':
+                    content = convertToText(data.script);
+                    filename = `${data.metadata.title.replace(/\s+/g, '_')}.txt`;
+                    mimeType = 'text/plain';
+                    break;
+            }
+            
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Format conversion functions
+        function convertToXML(data) {
+            return '<?xml version="1.0" encoding="UTF-8"?>\n<screenplay>\n    <metadata>\n        <title>' + data.metadata.title + '</title>\n        <exportType>' + data.metadata.exportType + '</exportType>\n        <exportedAt>' + data.metadata.exportedAt + '</exportedAt>\n    </metadata>\n    <script>\n        ' + data.script.lines.map(line => '<line format="' + line.format + '">' + escapeXML(line.content) + '</line>').join('\n        ') + '\n    </script>\n    <integration>\n        <apiEndpoint>' + data.integration.apiEndpoint + '</apiEndpoint>\n        <webhookUrl>' + data.integration.webhookUrl + '</webhookUrl>\n        <collaborationId>' + data.integration.collaborationId + '</collaborationId>\n    </integration>\n</screenplay>';
+        }
+
+        function convertToFountain(script) {
+            return script.lines.map(line => {
+                switch (line.format) {
+                    case 'scene-heading':
+                        return line.content.toUpperCase();
+                    case 'character':
+                        return line.content.toUpperCase();
+                    case 'dialogue':
+                        return line.content;
+                    case 'parenthetical':
+                        return `(${line.content})`;
+                    case 'action':
+                        return line.content;
+                    default:
+                        return line.content;
+                }
+            }).join('\n\n');
+        }
+
+        function convertToText(script) {
+            return script.lines.map(line => {
+                const prefix = {
+                    'scene-heading': '',
+                    'character': '                    ',
+                    'dialogue': '          ',
+                    'parenthetical': '                ',
+                    'action': ''
+                }[line.format] || '';
+                
+                return prefix + line.content;
+            }).join('\n\n');
+        }
+
+        function escapeXML(text) {
+            return text.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#39;');
+        }
+
+        // Statistics functions
+        function updateStats() {
+            const stats = calculateStats();
+            document.getElementById('wordCount').textContent = `${stats.words} words`;
+            document.getElementById('pageCount').textContent = `${stats.pages} pages`;
+        }
+
+        function calculateStats() {
+            let totalWords = 0;
+            document.querySelectorAll('.script-input').forEach(textarea => {
+                const text = textarea.value.trim();
+                if (text) {
+                    totalWords += text.split(/\s+/).length;
+                }
+            });
+            
+            const pages = Math.max(1, Math.ceil(totalWords / 250));
+            
+            return {
+                words: totalWords,
+                pages: pages,
+                scenes: scenes.length
+            };
+        }
+
+        // Notification system
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('statusNotification');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = message;
+            notification.className = `status-notification show ${isError ? 'error' : ''}`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.script-input').forEach(textarea => {
+                autoResize(textarea);
+            });
+            updateStats();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98d3740c30e199e6',t:'MTc2MDIzOTE0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
