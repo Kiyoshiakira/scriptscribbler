@@ -28,7 +28,7 @@
             const div = document.createElement('div');
             div.className = `script-editor-block ${type}`;
             div.setAttribute('data-type', type);
-            div.setAttribute('tabindex', '0');
+            div.setAttribute('contenteditable', 'true');
             div.setAttribute('data-placeholder', PLACEHOLDERS[type] || '');
             if (!text) div.classList.add('placeholder');
             div.innerText = text || '';
@@ -570,8 +570,7 @@
             const editor = document.getElementById('scriptEditor');
             const formatSelect = document.getElementById('formatSelect');
             
-            // Enable editor by default
-            editor.setAttribute('contenteditable', 'true');
+            // Enable format dropdown
             formatSelect.disabled = false;
             
             // Initialize the script editor with scene content
