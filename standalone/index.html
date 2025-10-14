@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Scribbler - Standalone Edition</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Status Notification -->
+    <div class="status-notification" id="statusNotification">
+        <span id="statusText">Success!</span>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="export-modal" id="exportModal">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">🚀 Export & Integrate</h2>
+                <button class="close-modal-btn" onclick="closeExportModal()">✕</button>
+            </div>
+
+            <div class="export-options">
+                <div class="export-option" onclick="selectExportType('collaborative')" data-type="collaborative">
+                    <span class="export-icon">👥</span>
+                    <div class="export-title">Collaborative Platform</div>
+                    <div class="export-desc">Export for team collaboration</div>
+                </div>
+                <div class="export-option" onclick="selectExportType('production')" data-type="production">
+                    <span class="export-icon">🎬</span>
+                    <div class="export-title">Production Ready</div>
+                    <div class="export-desc">Format for filming/recording</div>
+                </div>
+                <div class="export-option" onclick="selectExportType('development')" data-type="development">
+                    <span class="export-icon">🛠️</span>
+                    <div class="export-title">Development Tools</div>
+                    <div class="export-desc">Integrate with dev software</div>
+                </div>
+                <div class="export-option" onclick="selectExportType('sharing')" data-type="sharing">
+                    <span class="export-icon">🔗</span>
+                    <div class="export-title">Easy Sharing</div>
+                    <div class="export-desc">Web-friendly formats</div>
+                </div>
+            </div>
+
+            <div class="export-settings" id="exportSettings">
+                <div class="setting-group">
+                    <label class="setting-label">Project Title</label>
+                    <input type="text" class="setting-input" id="projectTitle" value="My Screenplay" placeholder="Enter project title">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Export Format</label>
+                    <select class="setting-input" id="exportFormat">
+                        <option value="json">JSON (API Integration)</option>
+                        <option value="xml">XML (Universal)</option>
+                        <option value="fountain">Fountain (Plain Text)</option>
+                        <option value="pdf">PDF (Presentation)</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Integration Target</label>
+                    <select class="setting-input" id="integrationTarget">
+                        <option value="generic">Generic Platform</option>
+                        <option value="github">GitHub Repository</option>
+                        <option value="google-drive">Google Drive</option>
+                        <option value="dropbox">Dropbox</option>
+                        <option value="slack">Slack Workspace</option>
+                        <option value="discord">Discord Server</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="export-actions">
+                <button class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="performExport()">Export & Integrate</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Top Navigation Bar -->
+        <div class="header">
+            <h1 class="logo">📝 Script Scribbler</h1>
+            <div class="top-nav">
+                <button class="top-nav-tab active" onclick="switchMainTab('script')" id="scriptTab">📜 Script</button>
+                <button class="top-nav-tab" onclick="switchMainTab('notes')" id="notesTab">📋 Notes</button>
+                <button class="top-nav-tab" onclick="switchMainTab('board')" id="boardTab">🎬 Board</button>
+                <button class="top-nav-tab" onclick="switchMainTab('characters')" id="charactersTab">👥 Characters</button>
+                <button class="top-nav-tab" onclick="switchMainTab('stats')" id="statsTab">📊 Stats</button>
+            </div>
+            <div class="header-actions">
+                <div class="options-dropdown">
+                    <button class="options-cog" onclick="toggleOptionsMenu()">⚙️</button>
+                    <div class="options-menu" id="optionsMenu">
+                        <div class="options-menu-item" onclick="openThemeSettings()">
+                            <span class="icon">🎨</span>
+                            <span>Theme Settings</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openPreferences()">
+                            <span class="icon">⚡</span>
+                            <span>Preferences</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openExportModal()">
+                            <span class="icon">🚀</span>
+                            <span>Export & Integrate</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openAbout()">
+                            <span class="icon">ℹ️</span>
+                            <span>About</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <!-- Script View -->
+            <div id="scriptView" class="view-container">
+                <div class="sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="section-title">📝 Scenes</h3>
+                        <div class="scene-list" id="sceneList">
+                            <div class="scene-item active" onclick="selectScene(0)">
+                                <div class="scene-title">Scene 1</div>
+                                <div class="scene-location">INT. COFFEE SHOP - DAY</div>
+                            </div>
+                            <div class="scene-item" onclick="selectScene(1)">
+                                <div class="scene-title">Scene 2</div>
+                                <div class="scene-location">EXT. PARK - AFTERNOON</div>
+                            </div>
+                        </div>
+                        <button class="add-scene-btn" onclick="addNewScene()">+ Add Scene</button>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="section-title">🔗 Quick Integration</h3>
+                        <div class="integration-panel">
+                            <div class="integration-title">Ready to collaborate?</div>
+                            <div class="integration-options">
+                                <div class="integration-option" onclick="quickIntegration('film')">
+                                    🎬 Film Production
+                                </div>
+                                <div class="integration-option" onclick="quickIntegration('game')">
+                                    🎮 Game Development
+                                </div>
+                                <div class="integration-option" onclick="quickIntegration('animation')">
+                                    🎨 Animation Studio
+                                </div>
+                                <div class="integration-option" onclick="quickIntegration('audio')">
+                                    🎵 Audio Production
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-toolbar">
+                        <select class="format-select" id="formatSelect" onchange="changeBlockTypeDropdown()">
+                            <option value="action">Action</option>
+                            <option value="scene-heading">Scene Heading</option>
+                            <option value="character">Character</option>
+                            <option value="dialogue">Dialogue</option>
+                            <option value="parenthetical">Parenthetical</option>
+                        </select>
+                        <div class="toolbar-info">
+                            <span id="wordCount">247 words</span> • 
+                            <span id="pageCount">2 pages</span> • 
+                            <span>Integration ready</span>
+                        </div>
+                    </div>
+                    <div class="editor" id="scriptEditor" contenteditable="false" spellcheck="false"></div>
+                </div>
+            </div>
+
+            <!-- Notes View -->
+            <div id="notesView" class="view-container" style="display: none;">
+                <div class="sidebar notes-sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="section-title">📋 Notes</h3>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" onclick="filterNotes('all')">All</button>
+                            <button class="filter-btn" onclick="filterNotes('character')">Character</button>
+                            <button class="filter-btn" onclick="filterNotes('world')">World</button>
+                            <button class="filter-btn" onclick="filterNotes('object')">Object</button>
+                            <button class="filter-btn" onclick="filterNotes('plot')">Plot</button>
+                            <button class="filter-btn" onclick="filterNotes('general')">General</button>
+                        </div>
+                        <div id="notesListContainer" class="notes-list">
+                            <!-- Notes will be dynamically populated here -->
+                        </div>
+                        <button class="add-scene-btn" onclick="addNewNote()">+ Add Note</button>
+                    </div>
+                </div>
+
+                <div class="editor-container">
+                    <div class="note-details" id="noteDetails">
+                        <div class="note-form" id="noteForm">
+                            <div class="note-header">
+                                <h2 class="note-form-title">Note Details</h2>
+                                <div class="note-color-picker">
+                                    <div class="color-option yellow active" onclick="changeNoteColor('yellow')" title="Yellow"></div>
+                                    <div class="color-option blue" onclick="changeNoteColor('blue')" title="Blue"></div>
+                                    <div class="color-option green" onclick="changeNoteColor('green')" title="Green"></div>
+                                    <div class="color-option pink" onclick="changeNoteColor('pink')" title="Pink"></div>
+                                    <div class="color-option purple" onclick="changeNoteColor('purple')" title="Purple"></div>
+                                    <div class="color-option orange" onclick="changeNoteColor('orange')" title="Orange"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Note Title</label>
+                                <input type="text" class="form-input" id="noteTitle" value="" oninput="updateNote()" placeholder="Enter note title">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Note Type</label>
+                                <select class="form-input" id="noteType" onchange="updateNoteType()">
+                                    <option value="general">General Note</option>
+                                    <option value="character">Character Note</option>
+                                    <option value="world">World Note</option>
+                                    <option value="object">Object Note</option>
+                                    <option value="plot">Plot Note</option>
+                                </select>
+                            </div>
+
+                            <!-- General Note Fields -->
+                            <div id="generalFields" class="note-fields-container">
+                                <div class="form-group">
+                                    <label class="form-label">Content</label>
+                                    <textarea class="form-input note-content-editor" id="noteContent" oninput="updateNote()" placeholder="Write your notes here..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Character Note Fields -->
+                            <div id="characterFields" class="note-fields-container" style="display: none;">
+                                <div class="note-field-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Character Name</label>
+                                        <input type="text" class="form-input" id="charNoteName" oninput="updateNote()" placeholder="e.g., Sarah Mitchell">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Role</label>
+                                        <input type="text" class="form-input" id="charNoteRole" oninput="updateNote()" placeholder="e.g., Protagonist">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Traits</label>
+                                    <input type="text" class="form-input" id="charNoteTraits" oninput="updateNote()" placeholder="e.g., Determined, witty, empathetic">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Goal</label>
+                                    <textarea class="form-input" id="charNoteGoal" oninput="updateNote()" placeholder="What does this character want?" rows="2"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Character Arc</label>
+                                    <textarea class="form-input" id="charNoteArc" oninput="updateNote()" placeholder="How does this character change?" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Additional Notes</label>
+                                    <textarea class="form-input note-content-editor" id="charNoteAdditional" oninput="updateNote()" placeholder="Background, relationships, quirks, etc."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- World Note Fields -->
+                            <div id="worldFields" class="note-fields-container" style="display: none;">
+                                <div class="form-group">
+                                    <label class="form-label">Location/Setting Name</label>
+                                    <input type="text" class="form-input" id="worldNoteName" oninput="updateNote()" placeholder="e.g., The Tribune Building">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-input" id="worldNoteDescription" oninput="updateNote()" placeholder="Describe this place or world element..." rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">World Rules/Logic</label>
+                                    <textarea class="form-input" id="worldNoteRules" oninput="updateNote()" placeholder="How does this world work?" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Brand/Object Replacements</label>
+                                    <textarea class="form-input" id="worldNoteReplacements" oninput="updateNote()" placeholder="e.g., 'Nintendo' → 'Funtendo'" rows="2"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Additional Details</label>
+                                    <textarea class="form-input note-content-editor" id="worldNoteAdditional" oninput="updateNote()" placeholder="Culture, atmosphere, significance..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Object Note Fields -->
+                            <div id="objectFields" class="note-fields-container" style="display: none;">
+                                <div class="form-group">
+                                    <label class="form-label">Object Name</label>
+                                    <input type="text" class="form-input" id="objectNoteName" oninput="updateNote()" placeholder="e.g., Sarah's Notebook">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-input" id="objectNoteDescription" oninput="updateNote()" placeholder="What does this object look like?" rows="2"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Significance</label>
+                                    <textarea class="form-input" id="objectNoteSignificance" oninput="updateNote()" placeholder="Why is this important?" rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Additional Notes</label>
+                                    <textarea class="form-input note-content-editor" id="objectNoteAdditional" oninput="updateNote()" placeholder="History, how it's used, etc."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Plot Note Fields -->
+                            <div id="plotFields" class="note-fields-container" style="display: none;">
+                                <div class="form-group">
+                                    <label class="form-label">Plot Point/Beat</label>
+                                    <input type="text" class="form-input" id="plotNoteBeat" oninput="updateNote()" placeholder="e.g., Inciting Incident">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Summary</label>
+                                    <textarea class="form-input" id="plotNoteSummary" oninput="updateNote()" placeholder="Brief summary..." rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Detailed Notes</label>
+                                    <textarea class="form-input note-content-editor" id="plotNoteDetails" oninput="updateNote()" placeholder="Freeform notes, ideas, etc."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>

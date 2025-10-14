@@ -1,0 +1,19 @@
+Icon Placeholder
+================
+
+This directory should contain the application icon.
+
+For production use, add a proper icon file named "icon.png" (at least 512x512 pixels).
+
+The icon should represent Script Scribbler - perhaps a pen, script, or notepad design.
+
+You can use icon generation tools like:
+- electron-icon-builder
+- Icon generators online
+- Design your own in tools like GIMP, Photoshop, or Figma
+
+The icon will be used for:
+- Application window icon
+- Taskbar/dock icon
+- Desktop shortcut icon
+- Installer icon
