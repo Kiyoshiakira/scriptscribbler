@@ -1,5 +1,4 @@
-   <script>
-        // --- SCRITE-LIKE SCRIPT EDITOR LOGIC ---
+      // --- SCRITE-LIKE SCRIPT EDITOR LOGIC ---
         const SCRIPT_BLOCK_TYPES = [
             'action',
             'scene-heading',
@@ -478,4 +477,3 @@
             // Do not enable editor until test button is clicked
             updateStats();
         });
-    </script>
