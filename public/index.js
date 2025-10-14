@@ -14,19 +14,14 @@
             'parenthetical': '(direction)'
         };
 
-        let editorEnabled = false; // Only enable after test button or login
+        let editorEnabled = true; // Always enabled
+        let currentSceneIndex = 0; // Track current scene
+        let sceneScripts = []; // Array of scripts, one per scene
 
         function enableTestEditor() {
-            editorEnabled = true;
-            const editor = document.getElementById('scriptEditor');
-            editor.setAttribute('contenteditable', 'true');
-            document.getElementById('formatSelect').disabled = false;
-            if (editor.innerHTML.trim() === "") {
-                initScriptEditor();
-            }
-            setTimeout(() => {
-                editor.querySelector('.script-editor-block')?.focus();
-            }, 50);
+            // No longer needed - editor is always enabled
+            // Kept for backward compatibility
+            showNotification('Editor is already enabled!');
         }
 
         function createScriptEditorBlock(type = 'action', text = '') {
@@ -48,7 +43,7 @@
                 } else {
                     div.classList.remove('placeholder');
                 }
-                autoFormatScriptBlock(this);
+                applySmartFormatting(this);
                 updateStats();
             });
             div.addEventListener('click', function() {
@@ -60,29 +55,74 @@
         function initScriptEditor() {
             const editor = document.getElementById('scriptEditor');
             if (!editor) return;
+            
+            // Initialize scene scripts if empty
+            if (sceneScripts.length === 0) {
+                // Create initial script for Scene 1
+                sceneScripts.push([
+                    {type: 'scene-heading', text: 'INT. COFFEE SHOP - DAY'},
+                    {type: 'action', text: 'SARAH, a young writer in her twenties, sits at a corner table typing furiously on her laptop. Steam rises from her untouched coffee.'},
+                    {type: 'character', text: 'SARAH'},
+                    {type: 'dialogue', text: "This story isn't working. I need something more... authentic."},
+                    {type: 'action', text: "She stares at the screen, frustrated. The cursor blinks mockingly at the end of an incomplete sentence."}
+                ]);
+                // Create initial script for Scene 2
+                sceneScripts.push([
+                    {type: 'scene-heading', text: "EXT. PARK - AFTERNOON"},
+                    {type: 'action', text: "Sarah walks through the park, phone pressed to her ear. She looks determined but nervous."},
+                    {type: 'character', text: "SARAH"},
+                    {type: 'dialogue', text: "Marcus, I know this sounds crazy, but I think I found our story."}
+                ]);
+            }
+            
+            // Load the current scene
+            loadSceneIntoEditor(currentSceneIndex);
+        }
+        
+        function loadSceneIntoEditor(sceneIndex) {
+            const editor = document.getElementById('scriptEditor');
+            if (!editor) return;
+            
+            // Save current scene before switching (but only if we have actual content loaded)
+            if (currentSceneIndex !== sceneIndex && editor.children.length > 0) {
+                saveCurrentSceneFromEditor();
+            }
+            
+            currentSceneIndex = sceneIndex;
             editor.innerHTML = '';
-            // Example initial lines
-            const initialBlocks = [
-                {type: 'scene-heading', text: 'INT. COFFEE SHOP - DAY'},
-                {type: 'action', text: 'SARAH, a young writer in her twenties, sits at a corner table typing furiously on her laptop. Steam rises from her untouched coffee.'},
-                {type: 'character', text: 'SARAH'},
-                {type: 'dialogue', text: "This story isn't working. I need something more... authentic."},
-                {type: 'action', text: "She stares at the screen, frustrated. The cursor blinks mockingly at the end of an incomplete sentence."},
-                {type: 'scene-heading', text: "EXT. PARK - AFTERNOON"},
-                {type: 'action', text: "Sarah walks through the park, phone pressed to her ear. She looks determined but nervous."},
-                {type: 'character', text: "SARAH"},
-                {type: 'dialogue', text: "Marcus, I know this sounds crazy, but I think I found our story."}
-            ];
-            for (const block of initialBlocks) {
+            
+            // Load blocks for the selected scene
+            const sceneBlocks = sceneScripts[sceneIndex] || [];
+            for (const block of sceneBlocks) {
                 editor.appendChild(createScriptEditorBlock(block.type, block.text));
             }
-            // Always have one empty block at the end
-            editor.appendChild(createScriptEditorBlock('action', ''));
+            
+            // Always have one empty block at the end if needed
+            if (sceneBlocks.length === 0 || sceneBlocks[sceneBlocks.length - 1].text !== '') {
+                editor.appendChild(createScriptEditorBlock('action', ''));
+            }
+            
             setTimeout(() => {
                 const first = editor.querySelector('.script-editor-block');
                 if (first) first.focus();
             }, 50);
             updateStats();
+        }
+        
+        function saveCurrentSceneFromEditor() {
+            const editor = document.getElementById('scriptEditor');
+            const blocks = editor.querySelectorAll('.script-editor-block');
+            const sceneData = [];
+            
+            blocks.forEach(block => {
+                const type = getBlockType(block);
+                const text = block.textContent.trim();
+                if (text || type === 'action') { // Save even empty action blocks
+                    sceneData.push({type, text});
+                }
+            });
+            
+            sceneScripts[currentSceneIndex] = sceneData;
         }
 
         function setFormatDropdownToBlock(block) {
@@ -91,16 +131,23 @@
         }
 
         function changeBlockTypeDropdown() {
-            if (!editorEnabled) return;
             const select = document.getElementById('formatSelect');
             const editor = document.getElementById('scriptEditor');
             const block = document.activeElement;
             if (!block || !block.classList || !block.classList.contains('script-editor-block')) return;
+            
+            const oldType = getBlockType(block);
+            const newType = select.value;
+            
             // Change class
             SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
-            block.classList.add(select.value);
-            block.setAttribute('data-type', select.value);
-            block.setAttribute('data-placeholder', PLACEHOLDERS[select.value] || '');
+            block.classList.add(newType);
+            block.setAttribute('data-type', newType);
+            block.setAttribute('data-placeholder', PLACEHOLDERS[newType] || '');
+            
+            // Apply smart formatting for the new type
+            applySmartFormattingForType(block, newType);
+            
             // Update placeholder status
             if (block.textContent.trim() === '') block.classList.add('placeholder');
             else block.classList.remove('placeholder');
@@ -109,7 +156,6 @@
         }
 
         function handleScriptEditorKeyDown(e) {
-            if (!editorEnabled) return;
             if (e.key === 'Tab') {
                 e.preventDefault();
                 cycleBlockType(this);
@@ -208,31 +254,56 @@
             updateStats();
         }
 
-        function autoFormatScriptBlock(block) {
-            const text = block.textContent.trim();
-            if (getBlockType(block) === 'scene-heading') return; // Don't disturb manual selection
-            if (/^(INT\.|EXT\.|EST\.|INT\/EXT\.)/i.test(text)) {
-                // Scene heading
-                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
-                block.classList.add('scene-heading');
-                block.setAttribute('data-type', 'scene-heading');
-            } else if (/^\(.+\)$/.test(text)) {
-                // Parenthetical
-                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
-                block.classList.add('parenthetical');
-                block.setAttribute('data-type', 'parenthetical');
-            } else if (text === text.toUpperCase() && text.length <= 30 && /^[A-Z0-9\s\-.']+$/.test(text) && text.length > 2) {
-                // Character name (all caps, short)
-                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
-                block.classList.add('character');
-                block.setAttribute('data-type', 'character');
-            } else if (text) {
-                // Default to action
-                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
-                block.classList.add('action');
-                block.setAttribute('data-type', 'action');
+        function applySmartFormatting(block) {
+            const text = block.textContent;
+            const type = getBlockType(block);
+            applySmartFormattingForType(block, type);
+        }
+        
+        function applySmartFormattingForType(block, type) {
+            const text = block.textContent;
+            
+            if (type === 'character') {
+                // Character: auto-uppercase, caret at end
+                const upperText = text.toUpperCase();
+                if (text !== upperText) {
+                    block.textContent = upperText;
+                    placeCaretAtEnd(block);
+                }
+            } else if (type === 'parenthetical') {
+                // Parenthetical: auto-insert '(' if not present, caret after '('
+                const trimmed = text.trim();
+                if (trimmed && !trimmed.startsWith('(')) {
+                    block.textContent = '(' + trimmed;
+                    // Place caret after the opening parenthesis
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    if (block.firstChild) {
+                        range.setStart(block.firstChild, 1);
+                        range.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    }
+                }
+            } else if (type === 'scene-heading') {
+                // Scene Heading: auto-uppercase
+                const upperText = text.toUpperCase();
+                if (text !== upperText) {
+                    // Save caret position
+                    const sel = window.getSelection();
+                    const caretPos = sel.focusOffset;
+                    block.textContent = upperText;
+                    // Restore caret position
+                    if (block.firstChild) {
+                        const range = document.createRange();
+                        range.setStart(block.firstChild, Math.min(caretPos, upperText.length));
+                        range.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    }
+                }
             }
-            setFormatDropdownToBlock(block);
+            // For action and dialogue, no special formatting needed
         }
 
         // Statistics
@@ -254,11 +325,12 @@
         // Export Modal and Notification logic (unchanged except for using block-based export)
         // ... (Export logic remains from previous file, but you would need to update collectScriptData to use script-editor-blocks) ...
 
-        // Quick Integration, Scenes, and Export Modal logic (unchanged except for script editor)
+        // Quick Integration, Scenes, and Export Modal logic (updated for multi-scene support)
         function selectScene(index) {
             document.querySelectorAll('.scene-item').forEach((item, i) => {
                 item.classList.toggle('active', i === index);
             });
+            loadSceneIntoEditor(index);
         }
 
         function addNewScene() {
@@ -270,12 +342,15 @@
             newScene.onclick = () => selectScene(sceneNumber - 1);
             sceneList.appendChild(newScene);
 
-            const editor = document.getElementById('scriptEditor');
-            if (editorEnabled) {
-                const sceneHeading = createScriptEditorBlock('scene-heading', 'INT./EXT. LOCATION - TIME');
-                editor.appendChild(sceneHeading);
-                editor.appendChild(createScriptEditorBlock('action', ''));
-            }
+            // Create a new blank script for this scene with starter blocks
+            sceneScripts.push([
+                {type: 'scene-heading', text: 'INT./EXT. LOCATION - TIME'},
+                {type: 'action', text: ''}
+            ]);
+            
+            // Switch to the new scene
+            selectScene(sceneNumber - 1);
+            
             showNotification('New scene added!');
         }
 
@@ -362,22 +437,41 @@
         }
 
         function collectScriptDataFromBlocks() {
-            const lines = [];
-            document.querySelectorAll('.script-editor-block').forEach(block => {
-                const format = getBlockType(block);
-                const content = block.textContent.trim();
-                if (content) {
-                    lines.push({
-                        format: format,
-                        content: content
-                    });
-                }
+            // Save current scene first
+            saveCurrentSceneFromEditor();
+            
+            // Collect all scenes
+            const allScenes = [];
+            sceneScripts.forEach((sceneBlocks, sceneIndex) => {
+                const sceneLines = [];
+                sceneBlocks.forEach(block => {
+                    if (block.text) {
+                        sceneLines.push({
+                            format: block.type,
+                            content: block.text
+                        });
+                    }
+                });
+                allScenes.push({
+                    sceneNumber: sceneIndex + 1,
+                    lines: sceneLines
+                });
             });
+            
+            // Calculate total statistics
+            let totalWords = 0;
+            allScenes.forEach(scene => {
+                scene.lines.forEach(line => {
+                    totalWords += line.content.split(/\s+/).length;
+                });
+            });
+            
             return {
-                lines: lines,
+                scenes: allScenes,
+                lines: allScenes.flatMap(scene => scene.lines),
                 statistics: {
-                    words: lines.map(line => line.content.split(/\s+/).length).reduce((a, b) => a + b, 0),
-                    pages: Math.max(1, Math.ceil(lines.map(line => line.content.split(/\s+/).length).reduce((a, b) => a + b, 0) / 250))
+                    words: totalWords,
+                    pages: Math.max(1, Math.ceil(totalWords / 250))
                 }
             };
         }
@@ -471,9 +565,15 @@
                       .replace(/'/g, '&#39;');
         }
 
-        // Initialize script editor disabled by default, waits for Test button
+        // Initialize script editor enabled by default
         document.addEventListener('DOMContentLoaded', function() {
             const editor = document.getElementById('scriptEditor');
-            // Do not enable editor until test button is clicked
-            updateStats();
+            const formatSelect = document.getElementById('formatSelect');
+            
+            // Enable editor by default
+            editor.setAttribute('contenteditable', 'true');
+            formatSelect.disabled = false;
+            
+            // Initialize the script editor with scene content
+            initScriptEditor();
         });
