@@ -527,18 +527,33 @@
             }
             const projectTitle = document.getElementById('projectTitle').value;
             const exportFormat = document.getElementById('exportFormat').value;
+            const exportContent = document.getElementById('exportContent').value;
             const integrationTarget = document.getElementById('integrationTarget').value;
-            const scriptData = collectScriptDataFromBlocks();
+            
+            let exportData = {};
+            
+            // Build export data based on content selection
+            if (exportContent === 'full' || exportContent === 'scenes') {
+                const scriptData = collectScriptDataFromBlocks();
+                exportData.scenes = sceneScripts;
+                exportData.script = scriptData;
+            }
+            
+            if (exportContent === 'full' || exportContent === 'notes') {
+                exportData.notes = notes;
+            }
+            
             const exportPackage = {
                 metadata: {
                     title: projectTitle,
                     exportType: selectedExportType,
                     format: exportFormat,
+                    content: exportContent,
                     target: integrationTarget,
                     exportedAt: new Date().toISOString(),
                     version: "1.0"
                 },
-                script: scriptData,
+                ...exportData,
                 integration: {
                     apiEndpoint: generateAPIEndpoint(),
                     webhookUrl: generateWebhookUrl(),
@@ -548,7 +563,7 @@
             showNotification('Preparing export...');
             setTimeout(() => {
                 downloadExport(exportPackage, exportFormat);
-                showNotification(`Successfully exported for ${integrationTarget}!`);
+                showNotification(`Successfully exported ${exportContent} for ${integrationTarget}!`);
                 closeExportModal();
             }, 2000);
         }
