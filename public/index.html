@@ -325,6 +325,79 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Board View -->
+            <div id="boardView" class="view-container" style="display: none;">
+                <div class="board-container">
+                    <div class="board-header">
+                        <h2 class="board-title">🎬 Scene Board</h2>
+                        <div class="board-controls">
+                            <div class="view-toggle">
+                                <button class="view-btn active" onclick="setBoardView('grid')" id="gridViewBtn">Grid</button>
+                                <button class="view-btn" onclick="setBoardView('timeline')" id="timelineViewBtn">Timeline</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scene-cards-container" id="sceneCardsContainer">
+                        <!-- Scene cards will be dynamically populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Characters View -->
+            <div id="charactersView" class="view-container" style="display: none;">
+                <div class="characters-container">
+                    <div class="characters-header">
+                        <h2 class="characters-title">👥 Characters</h2>
+                        <button class="add-character-btn" onclick="addNewCharacter()">+ Add Character</button>
+                    </div>
+                    <div class="characters-grid" id="charactersGrid">
+                        <!-- Character cards will be dynamically populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats View -->
+            <div id="statsView" class="view-container" style="display: none;">
+                <div class="stats-container">
+                    <div class="stats-header">
+                        <h2 class="stats-title">📊 Script Statistics</h2>
+                        <p class="stats-subtitle">Professional metrics for your screenplay</p>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card pages">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-value" id="statTotalPages">0</div>
+                            <div class="stat-label">Total Pages</div>
+                        </div>
+                        <div class="stat-card runtime">
+                            <div class="stat-icon">⏱️</div>
+                            <div class="stat-value" id="statEstimatedRuntime">0</div>
+                            <div class="stat-label">Est. Runtime (min)</div>
+                        </div>
+                        <div class="stat-card scenes">
+                            <div class="stat-icon">🎬</div>
+                            <div class="stat-value" id="statTotalScenes">0</div>
+                            <div class="stat-label">Total Scenes</div>
+                        </div>
+                        <div class="stat-card words">
+                            <div class="stat-icon">📝</div>
+                            <div class="stat-value" id="statTotalWords">0</div>
+                            <div class="stat-label">Total Words</div>
+                        </div>
+                    </div>
+                    <div class="stats-details">
+                        <div class="stat-detail-card">
+                            <h3>Scene Breakdown</h3>
+                            <div id="sceneBreakdown" class="stat-content">Loading...</div>
+                        </div>
+                        <div class="stat-detail-card">
+                            <h3>Character Analysis</h3>
+                            <div id="characterAnalysis" class="stat-content">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="index.js"></script>
