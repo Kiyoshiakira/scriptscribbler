@@ -14,14 +14,76 @@ This is the standalone desktop version of Script Scribbler, built with Electron.
 - 📊 **[Diagrams](DIAGRAMS.md)** - Visual architecture
 - 📑 **[Documentation Index](INDEX.md)** - Find the right guide
 
+## What's New in v2.0
+
+**Major UI/UX improvements ported from the browser version!**
+
+This release brings all the usability enhancements from the browser version to the standalone desktop app:
+
+- ✅ **Undo/Redo System**: Full 50-action history with keyboard shortcuts
+- ✅ **Visual Block Indicators**: Color-coded script blocks with emoji icons
+- ✅ **Resizable Sidebar**: Drag to resize between 200-500px
+- ✅ **Drag-and-Drop Scenes**: Reorder scenes with visual feedback
+- ✅ **Note Pinning**: Pin important notes to the top
+- ✅ **Scene Linking**: Link notes to scenes for quick navigation
+- ✅ **Enhanced Search**: Instant results with highlighting and filters
+- ✅ **Preferences Modal**: Customize font size, theme, auto-save, and export format
+- ✅ **Auto-Save & Recovery**: Automatic saving every 30 seconds with crash recovery
+- ✅ **Keyboard Shortcuts**: Comprehensive keyboard navigation
+- ✅ **Accessibility**: Full keyboard navigation and focus indicators
+
+See [BROWSER_IMPROVEMENTS.md](../BROWSER_IMPROVEMENTS.md) for detailed feature descriptions.
+
 ## Features
 
+### Core Features
 - **Native Desktop Application**: Runs standalone without a browser
 - **Cross-Platform**: Works on Windows, macOS, and Linux
 - **File System Integration**: Save and load projects directly to your computer
 - **Export Capabilities**: Export to JSON, XML, Fountain, and Text formats
 - **Native Menus**: Standard desktop application menus and keyboard shortcuts
 - **Offline Support**: Works completely offline
+
+### Enhanced Editor (v2.0)
+- **Undo/Redo**: Full undo/redo support with 50-action history (Ctrl+Z / Ctrl+Shift+Z)
+- **Visual Block Types**: Color-coded script blocks with emoji indicators (🎬📝👤💬📌)
+- **Enhanced Focus States**: Clear purple outlines and shadow effects on active blocks
+- **Inline Editing**: Smooth keyboard navigation between blocks
+
+### Sidebar Enhancements
+- **Resizable Sidebar**: Drag the right edge to resize (200-500px range)
+- **Drag-and-Drop Scenes**: Reorder scenes by dragging the ⋮⋮ handle
+- **Visual Feedback**: Hover states, drag indicators, and smooth animations
+
+### Notes & Navigation
+- **Note Pinning**: Pin important notes to the top with the 📌 button
+- **Scene Linking**: Link notes to specific scenes for quick navigation
+- **Quick-Jump**: Jump from notes directly to linked scenes with the 🔗 button
+- **Enhanced Organization**: Notes sorted by pinned status, then by date
+
+### Search & Discovery
+- **Enhanced Search**: Instant results with highlighting (Ctrl+F / Cmd+F)
+- **Smart Filters**: Filter by All, Scenes, Notes, or Characters
+- **Keyboard Navigation**: Use ↑/↓ arrows to navigate, Enter to select
+- **Context Preview**: See surrounding text for each result
+
+### Preferences & Settings
+- **Font Size Options**: Small, Medium, Large, or Extra Large
+- **Export Format**: Set your preferred default format
+- **Auto-Save**: Optional 30-second auto-save with recovery on crash
+- **Themes**: Default (Purple), Light, or Dark mode
+
+### Keyboard Shortcuts
+- **Editing**: Ctrl+Z (Undo), Ctrl+Shift+Z (Redo), Ctrl+S (Save)
+- **Navigation**: Ctrl+1-5 (Switch tabs), Ctrl+F (Search)
+- **Tab Navigation**: Tab (cycle block types), Enter (new block), ↑/↓ (navigate blocks)
+- **Preferences**: Ctrl+, / Cmd+, to open settings
+
+### Accessibility
+- **Keyboard Navigation**: All features accessible via keyboard
+- **Focus Indicators**: Clear purple outlines on focused elements
+- **Screen Reader Support**: Semantic HTML and ARIA labels
+- **Responsive Design**: Adapts to different window sizes
 
 ## Technology Stack
 
