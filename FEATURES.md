@@ -65,13 +65,37 @@ Professional screenplay analytics and metrics:
   - Total Scenes
   - Total Words
 
-- **Detailed Breakdowns**:
-  - Scene-by-scene word count analysis
-  - Top characters by appearance
-  - Industry-standard page calculations (~250 words per page)
+- **Act Structure Visualization**:
+  - Visual bar chart showing the three-act structure
+  - Scene distribution across acts (Act I, II, III)
+  - Interactive hover effects for better understanding
+
+- **Detailed Character Analytics**:
+  - Per-character dialogue line count
+  - Per-character word count
+  - Scene appearances for each character
+  - Top 5 characters by dialogue volume
+
+- **Location Tracking**:
+  - Most frequently used locations/settings
+  - Scene count per location
+  - Helps identify recurring settings
+
+- **Scene-by-Scene Breakdown**:
+  - Word count analysis for each scene
+  - Helps identify pacing issues
+  - Spot scenes that may need expansion or trimming
+
+- **Export Functionality**:
+  - Export all statistics to CSV format
+  - Includes overall stats, character analytics, location data, and scene breakdown
+  - Perfect for sharing with collaborators or further analysis
+
+- **Industry Standards**:
+  - Page calculations (~250 words per page)
   - Runtime estimation (1 minute per page)
 
-**Usage**: Click the "📊 Stats" tab to view your screenplay statistics.
+**Usage**: Click the "📊 Stats" tab to view your screenplay statistics. Use the "📥 Export Stats" button to download a comprehensive CSV report.
 
 ### 🔍 Advanced Search
 

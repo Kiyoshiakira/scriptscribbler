@@ -992,6 +992,9 @@
             document.getElementById('statTotalScenes').textContent = stats.totalScenes;
             document.getElementById('statTotalWords').textContent = stats.totalWords;
             
+            // Update act structure visualization
+            updateActStructure();
+            
             // Update scene breakdown
             const sceneBreakdown = document.getElementById('sceneBreakdown');
             if (sceneBreakdown) {
@@ -1010,21 +1013,192 @@
                 sceneBreakdown.innerHTML = breakdownHTML || '<p style="color: #94a3b8;">No scenes yet</p>';
             }
             
-            // Update character analysis
+            // Update character analysis with detailed stats
             const characterAnalysis = document.getElementById('characterAnalysis');
             if (characterAnalysis) {
-                extractCharactersFromScript();
+                const detailedCharStats = calculateDetailedCharacterStats();
                 let analysisHTML = '';
-                characters.slice(0, 5).forEach(char => {
+                detailedCharStats.slice(0, 5).forEach(char => {
                     analysisHTML += `
-                        <div class="stat-item">
+                        <div class="stat-item character-stat-detailed">
                             <span class="stat-item-label">${char.name}</span>
-                            <span class="stat-item-value">${char.scenes} scenes</span>
+                            <div class="stat-item-details">
+                                <span class="stat-detail">${char.lines} lines</span>
+                                <span class="stat-detail">${char.words} words</span>
+                                <span class="stat-detail">${char.scenes} scenes</span>
+                            </div>
                         </div>
                     `;
                 });
                 characterAnalysis.innerHTML = analysisHTML || '<p style="color: #94a3b8;">No characters yet</p>';
             }
+            
+            // Update location analysis
+            const locationAnalysis = document.getElementById('locationAnalysis');
+            if (locationAnalysis) {
+                const locations = calculateLocationStats();
+                let locationHTML = '';
+                locations.slice(0, 5).forEach(loc => {
+                    locationHTML += `
+                        <div class="stat-item">
+                            <span class="stat-item-label">${loc.name}</span>
+                            <span class="stat-item-value">${loc.count} scenes</span>
+                        </div>
+                    `;
+                });
+                locationAnalysis.innerHTML = locationHTML || '<p style="color: #94a3b8;">No locations yet</p>';
+            }
+        }
+        
+        function updateActStructure() {
+            const actBar = document.getElementById('actBar');
+            if (!actBar) return;
+            
+            const totalScenes = sceneScripts.length;
+            if (totalScenes === 0) {
+                actBar.innerHTML = '<p style="color: #94a3b8;">No scenes yet</p>';
+                return;
+            }
+            
+            // Calculate act boundaries (using traditional 3-act structure)
+            const act1End = Math.floor(totalScenes / 4);
+            const act2End = Math.floor(totalScenes * 3 / 4);
+            
+            const act1Percentage = (act1End / totalScenes) * 100;
+            const act2Percentage = ((act2End - act1End) / totalScenes) * 100;
+            const act3Percentage = ((totalScenes - act2End) / totalScenes) * 100;
+            
+            actBar.innerHTML = `
+                <div class="act-segment act-1" style="width: ${act1Percentage}%">
+                    <span>Act I</span>
+                    <small>${act1End} scenes</small>
+                </div>
+                <div class="act-segment act-2" style="width: ${act2Percentage}%">
+                    <span>Act II</span>
+                    <small>${act2End - act1End} scenes</small>
+                </div>
+                <div class="act-segment act-3" style="width: ${act3Percentage}%">
+                    <span>Act III</span>
+                    <small>${totalScenes - act2End} scenes</small>
+                </div>
+            `;
+        }
+        
+        function calculateLocationStats() {
+            const locationMap = new Map();
+            
+            sceneScripts.forEach((sceneData) => {
+                sceneData.forEach((block) => {
+                    if (block.type === 'scene-heading' && block.text.trim()) {
+                        const location = block.text.trim();
+                        if (locationMap.has(location)) {
+                            locationMap.set(location, locationMap.get(location) + 1);
+                        } else {
+                            locationMap.set(location, 1);
+                        }
+                    }
+                });
+            });
+            
+            return Array.from(locationMap.entries())
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count);
+        }
+        
+        function calculateDetailedCharacterStats() {
+            const charMap = new Map();
+            
+            sceneScripts.forEach((sceneData, sceneIndex) => {
+                let currentCharacter = null;
+                let sceneCharacters = new Set();
+                
+                sceneData.forEach((block, blockIndex) => {
+                    if (block.type === 'character' && block.text.trim()) {
+                        currentCharacter = block.text.trim();
+                        sceneCharacters.add(currentCharacter);
+                        
+                        if (!charMap.has(currentCharacter)) {
+                            charMap.set(currentCharacter, {
+                                name: currentCharacter,
+                                lines: 0,
+                                words: 0,
+                                scenes: 0,
+                                initials: getInitials(currentCharacter)
+                            });
+                        }
+                    } else if (block.type === 'dialogue' && currentCharacter) {
+                        const char = charMap.get(currentCharacter);
+                        char.lines++;
+                        const words = block.text ? block.text.split(/\s+/).filter(w => w).length : 0;
+                        char.words += words;
+                    }
+                });
+                
+                // Count unique scenes for each character
+                sceneCharacters.forEach(charName => {
+                    if (charMap.has(charName)) {
+                        charMap.get(charName).scenes++;
+                    }
+                });
+            });
+            
+            return Array.from(charMap.values()).sort((a, b) => b.words - a.words);
+        }
+        
+        function exportStats() {
+            const stats = calculateScriptStats();
+            const characterStats = calculateDetailedCharacterStats();
+            const locationStats = calculateLocationStats();
+            
+            // Build CSV content
+            let csv = 'Script Scribbler - Statistics Export\n\n';
+            
+            // Overall Stats
+            csv += 'Overall Statistics\n';
+            csv += 'Metric,Value\n';
+            csv += `Total Pages,${stats.totalPages}\n`;
+            csv += `Estimated Runtime (minutes),${stats.estimatedRuntime}\n`;
+            csv += `Total Scenes,${stats.totalScenes}\n`;
+            csv += `Total Words,${stats.totalWords}\n\n`;
+            
+            // Character Stats
+            csv += 'Character Statistics\n';
+            csv += 'Character,Lines,Words,Scenes\n';
+            characterStats.forEach(char => {
+                csv += `"${char.name}",${char.lines},${char.words},${char.scenes}\n`;
+            });
+            csv += '\n';
+            
+            // Location Stats
+            csv += 'Location Statistics\n';
+            csv += 'Location,Scene Count\n';
+            locationStats.forEach(loc => {
+                csv += `"${loc.name}",${loc.count}\n`;
+            });
+            csv += '\n';
+            
+            // Scene Breakdown
+            csv += 'Scene Breakdown\n';
+            csv += 'Scene,Words\n';
+            sceneScripts.forEach((sceneData, index) => {
+                const wordCount = sceneData.reduce((sum, block) => {
+                    return sum + (block.text ? block.text.split(/\s+/).filter(w => w).length : 0);
+                }, 0);
+                csv += `Scene ${index + 1},${wordCount}\n`;
+            });
+            
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'script_statistics.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Statistics exported successfully!');
         }
 
         function calculateScriptStats() {

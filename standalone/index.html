@@ -458,6 +458,7 @@
                     <div class="stats-header">
                         <h2 class="stats-title">📊 Script Statistics</h2>
                         <p class="stats-subtitle">Professional metrics for your screenplay</p>
+                        <button class="btn btn-primary" onclick="exportStats()">📥 Export Stats</button>
                     </div>
                     <div class="stats-grid">
                         <div class="stat-card pages">
@@ -483,12 +484,24 @@
                     </div>
                     <div class="stats-details">
                         <div class="stat-detail-card">
-                            <h3>Scene Breakdown</h3>
-                            <div id="sceneBreakdown" class="stat-content">Loading...</div>
+                            <h3>Act Structure</h3>
+                            <div id="actStructure" class="stat-content">
+                                <div class="act-visualization">
+                                    <div class="act-bar" id="actBar"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="stat-detail-card">
                             <h3>Character Analysis</h3>
                             <div id="characterAnalysis" class="stat-content">Loading...</div>
+                        </div>
+                        <div class="stat-detail-card">
+                            <h3>Scene Breakdown</h3>
+                            <div id="sceneBreakdown" class="stat-content">Loading...</div>
+                        </div>
+                        <div class="stat-detail-card">
+                            <h3>Top Locations</h3>
+                            <div id="locationAnalysis" class="stat-content">Loading...</div>
                         </div>
                     </div>
                 </div>
