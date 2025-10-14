@@ -1,0 +1,3132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptCraft - Screenwriting App</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 32px;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .login-form {
+            text-align: left;
+        }
+
+        .login-form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-switch {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .login-switch-btn {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .login-switch-btn:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .demo-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: white;
+            margin: 10px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 12px 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s;
+            font-size: 12px;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #4f46e5;
+            border-bottom: 2px solid #4f46e5;
+        }
+
+        .nav-tab:hover {
+            color: #4f46e5;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .project-info {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .scenes-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .scene-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .scene-item:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
+        }
+
+        .scene-item.active {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .scene-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .scene-location {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Scene Board Styles */
+        .scene-board {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .board-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .board-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .view-btn {
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .scene-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            min-height: 400px;
+        }
+
+        .scene-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: grab;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .scene-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .scene-card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            cursor: grabbing;
+        }
+
+        .scene-card.drop-target {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .scene-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .scene-card-number {
+            background: #4f46e5;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .scene-card-menu {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .scene-card-menu:hover {
+            background: #f1f5f9;
+            color: #4f46e5;
+        }
+
+        .scene-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .scene-card-location {
+            font-size: 14px;
+            color: #4f46e5;
+            font-weight: 500;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .scene-card-description {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .scene-card-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #9ca3af;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 12px;
+        }
+
+        .scene-card-act {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .scene-card-act.act-2 {
+            background: #f59e0b;
+        }
+
+        .scene-card-act.act-3 {
+            background: #ef4444;
+        }
+
+        .add-scene-card {
+            border: 2px dashed #d1d5db;
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 200px;
+        }
+
+        .add-scene-card:hover {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .add-scene-icon {
+            font-size: 32px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .add-scene-text {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Statistics Styles */
+        .statistics-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: white;
+        }
+
+        .stats-header {
+            margin-bottom: 32px;
+        }
+
+        .stats-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .stats-subtitle {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+
+        .stat-card.pages {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        }
+
+        .stat-card.runtime {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .stat-card.scenes {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .stat-card.characters {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .stat-card.words {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .stat-card.dialogue {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 24px;
+            opacity: 0.3;
+        }
+
+        .stats-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            background: #f1f5f9;
+            border-radius: 8px;
+            height: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.dialogue {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        }
+
+        .progress-fill.action {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .act-breakdown {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .act-segment {
+            flex: 1;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .act-1 {
+            background: #10b981;
+        }
+
+        .act-2 {
+            background: #f59e0b;
+        }
+
+        .act-3 {
+            background: #ef4444;
+        }
+
+        .act-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .editor-toolbar {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .format-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .editor {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #fefefe;
+        }
+
+        .script-line {
+            margin-bottom: 12px;
+            min-height: 20px;
+            position: relative;
+        }
+
+        .script-line.scene-heading {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        .script-line.action {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .script-line.character {
+            margin-left: 220px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .script-line.dialogue {
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+
+        .script-line.parenthetical {
+            margin-left: 160px;
+            margin-right: 120px;
+            font-style: italic;
+        }
+
+        .script-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            resize: none;
+            overflow: hidden;
+        }
+
+        .add-scene-btn {
+            margin: 16px;
+            padding: 12px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .add-scene-btn:hover {
+            background: #4338ca;
+        }
+
+        .characters-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .character-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .character-item:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
+        }
+
+        .character-item.active {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+
+        .character-avatar-container {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .character-avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .character-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .character-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+
+        .character-role {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .character-description {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        .character-details {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .character-form {
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .character-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .image-upload-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .image-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-upload-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 8px;
+            transition: background 0.2s;
+        }
+
+        .image-upload-btn:hover {
+            background: #4338ca;
+        }
+
+        .image-remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .image-remove-btn:hover {
+            background: #dc2626;
+        }
+
+        .image-upload-input {
+            display: none;
+        }
+
+        .image-upload-hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .scene-image-container {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f1f5f9;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #d1d5db;
+            position: relative;
+        }
+
+        .scene-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scene-image-placeholder {
+            text-align: center;
+            color: #64748b;
+        }
+
+        .scene-image-placeholder svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+
+        .scene-upload-overlay {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .scene-upload-btn {
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .scene-upload-btn:hover {
+            background: rgba(0,0,0,0.9);
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .notes-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .note-item {
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .note-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .note-item.active {
+            border-color: rgba(0,0,0,0.2);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .note-item.yellow {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+        }
+
+        .note-item.blue {
+            background: linear-gradient(135deg, #dbeafe, #93c5fd);
+            color: #1e40af;
+        }
+
+        .note-item.green {
+            background: linear-gradient(135deg, #d1fae5, #86efac);
+            color: #065f46;
+        }
+
+        .note-item.pink {
+            background: linear-gradient(135deg, #fce7f3, #f9a8d4);
+            color: #be185d;
+        }
+
+        .note-item.purple {
+            background: linear-gradient(135deg, #e9d5ff, #c4b5fd);
+            color: #6b21a8;
+        }
+
+        .note-item.orange {
+            background: linear-gradient(135deg, #fed7aa, #fdba74);
+            color: #c2410c;
+        }
+
+        .note-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .note-preview {
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .note-date {
+            font-size: 11px;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .note-details {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .note-form {
+            max-width: 700px;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .note-color-picker {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: #374151;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #374151;
+        }
+
+        .color-option.yellow {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+
+        .color-option.blue {
+            background: linear-gradient(135deg, #dbeafe, #93c5fd);
+        }
+
+        .color-option.green {
+            background: linear-gradient(135deg, #d1fae5, #86efac);
+        }
+
+        .color-option.pink {
+            background: linear-gradient(135deg, #fce7f3, #f9a8d4);
+        }
+
+        .color-option.purple {
+            background: linear-gradient(135deg, #e9d5ff, #c4b5fd);
+        }
+
+        .color-option.orange {
+            background: linear-gradient(135deg, #fed7aa, #fdba74);
+        }
+
+        .note-content-editor {
+            min-height: 300px;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+
+        .note-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .export-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            min-width: 280px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .export-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .export-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .export-option:last-child {
+            border-bottom: none;
+        }
+
+        .export-option:hover {
+            background: #f8fafc;
+        }
+
+        .export-option:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .export-option:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .export-icon {
+            font-size: 20px;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .export-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .export-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .export-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .export-status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .export-status.error {
+            background: #ef4444;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .collaboration-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .collaboration-panel.open {
+            transform: translateX(0);
+        }
+
+        .collaboration-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collaboration-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close-panel-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-panel-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .collaboration-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .collaboration-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-link-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .share-link-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: monospace;
+            background: white;
+            margin-bottom: 12px;
+        }
+
+        .share-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .share-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #4f46e5;
+            background: white;
+            color: #4f46e5;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .share-btn:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .share-btn.primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .share-btn.primary:hover {
+            background: #4338ca;
+        }
+
+        .collaborator-list {
+            space-y: 12px;
+        }
+
+        .collaborator-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .collaborator-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .collaborator-info {
+            flex: 1;
+        }
+
+        .collaborator-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .collaborator-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .collaborator-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-indicator.online {
+            background: #10b981;
+        }
+
+        .status-indicator.offline {
+            background: #6b7280;
+        }
+
+        .status-indicator.editing {
+            background: #f59e0b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .invite-form {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .invite-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .permission-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            background: white;
+        }
+
+        .invite-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .invite-btn:hover {
+            background: #4338ca;
+        }
+
+        .activity-feed {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 2px;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .comments-section {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 12px;
+        }
+
+        .comment-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comment-btn {
+            padding: 8px 16px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .comment-btn:hover {
+            background: #4338ca;
+        }
+
+        .comment-list {
+            margin-top: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .comment-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1e293b;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.4;
+        }
+
+        .collaboration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collaboration-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .status-bar {
+            padding: 8px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 10;
+                height: 100%;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .script-line.character {
+                margin-left: 120px;
+            }
+
+            .script-line.dialogue {
+                margin-left: 60px;
+                margin-right: 60px;
+            }
+
+            .script-line.parenthetical {
+                margin-left: 80px;
+                margin-right: 80px;
+            }
+
+            .scene-cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-charts {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">📝 ScriptCraft</h1>
+                <p class="login-subtitle">Professional screenwriting made simple</p>
+            </div>
+
+            <div class="demo-info">
+                <strong>Firebase Ready:</strong> Configure your Firebase project credentials in the JavaScript section to enable Google Sign-In and cloud data storage.
+            </div>
+
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+            <form class="login-form" id="authForm" onsubmit="handleAuth(event)">
+                <div class="login-form-group">
+                    <label class="login-label">Email</label>
+                    <input type="email" class="login-input" id="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="login-form-group">
+                    <label class="login-label">Password</label>
+                    <input type="password" class="login-input" id="password" required placeholder="Enter your password">
+                </div>
+
+                <div class="login-form-group" id="nameGroup" style="display: none;">
+                    <label class="login-label">Full Name</label>
+                    <input type="text" class="login-input" id="fullName" placeholder="Enter your full name">
+                </div>
+
+                <button type="submit" class="login-btn" id="authButton">Sign In</button>
+            </form>
+
+            <div class="login-switch">
+                <span id="switchText">Don't have an account?</span>
+                <a class="login-switch-btn" onclick="toggleAuthMode()" id="switchBtn">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Status Notification -->
+    <div class="export-status" id="exportStatus">
+        <span id="exportStatusText">Exported successfully!</span>
+    </div>
+
+    <!-- Collaboration Overlay -->
+    <div class="collaboration-overlay" id="collaborationOverlay" onclick="closeCollaborationPanel()"></div>
+
+    <!-- Collaboration Panel -->
+    <div class="collaboration-panel" id="collaborationPanel">
+        <div class="collaboration-header">
+            <h2 class="collaboration-title">👥 Collaboration</h2>
+            <button class="close-panel-btn" onclick="closeCollaborationPanel()">✕</button>
+        </div>
+        
+        <div class="collaboration-content">
+            <!-- Share Project Section -->
+            <div class="collaboration-section">
+                <h3 class="section-title">🔗 Share Project</h3>
+                <div class="share-link-container">
+                    <input type="text" class="share-link-input" id="shareLink" readonly value="https://scriptcraft.app/shared/abc123xyz">
+                    <div class="share-actions">
+                        <button class="share-btn" onclick="copyShareLink()">📋 Copy</button>
+                        <button class="share-btn primary" onclick="generateNewLink()">🔄 New Link</button>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #64748b; margin: 0;">Anyone with this link can view your screenplay. Use invite system below for editing access.</p>
+            </div>
+
+            <!-- Current Collaborators -->
+            <div class="collaboration-section">
+                <h3 class="section-title">👥 Collaborators (3)</h3>
+                <div class="collaborator-list">
+                    <div class="collaborator-item">
+                        <div class="collaborator-avatar">SM</div>
+                        <div class="collaborator-info">
+                            <div class="collaborator-name">Sarah Mitchell (You)</div>
+                            <div class="collaborator-role">Owner • Full Access</div>
+                        </div>
+                        <div class="collaborator-status">
+                            <div class="status-indicator editing"></div>
+                            <span>Editing</span>
+                        </div>
+                    </div>
+                    <div class="collaborator-item">
+                        <div class="collaborator-avatar">MC</div>
+                        <div class="collaborator-info">
+                            <div class="collaborator-name">Marcus Chen</div>
+                            <div class="collaborator-role">Editor • Can Edit</div>
+                        </div>
+                        <div class="collaborator-status">
+                            <div class="status-indicator online"></div>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    <div class="collaborator-item">
+                        <div class="collaborator-avatar">ER</div>
+                        <div class="collaborator-info">
+                            <div class="collaborator-name">Elena Rodriguez</div>
+                            <div class="collaborator-role">Viewer • Can Comment</div>
+                        </div>
+                        <div class="collaborator-status">
+                            <div class="status-indicator offline"></div>
+                            <span>Offline</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invite New Collaborator -->
+            <div class="collaboration-section">
+                <h3 class="section-title">✉️ Invite Collaborator</h3>
+                <div class="invite-form">
+                    <input type="email" class="invite-input" id="inviteEmail" placeholder="Enter email address">
+                    <select class="permission-select" id="invitePermission">
+                        <option value="editor">Editor - Can edit and comment</option>
+                        <option value="commenter">Commenter - Can view and comment</option>
+                        <option value="viewer">Viewer - Can only view</option>
+                    </select>
+                    <button class="invite-btn" onclick="sendInvite()">Send Invitation</button>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="collaboration-section">
+                <h3 class="section-title">📈 Recent Activity</h3>
+                <div class="activity-feed">
+                    <div class="activity-item">
+                        <div class="activity-avatar">MC</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Marcus added a comment on Scene 2</div>
+                            <div class="activity-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">SM</div>
+                        <div class="activity-content">
+                            <div class="activity-text">You edited the dialogue in Scene 1</div>
+                            <div class="activity-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">ER</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Elena joined the project</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-avatar">MC</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Marcus suggested changes to character development</div>
+                            <div class="activity-time">3 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="collaboration-section comments-section">
+                <h3 class="section-title">💬 Project Comments</h3>
+                <textarea class="comment-input" id="newComment" placeholder="Add a comment about the overall project..."></textarea>
+                <div class="comment-actions">
+                    <span style="font-size: 12px; color: #64748b;">Tip: Use @name to mention collaborators</span>
+                    <button class="comment-btn" onclick="addComment()">Post Comment</button>
+                </div>
+                
+                <div class="comment-list">
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">Marcus Chen</span>
+                            <span class="comment-time">2 hours ago</span>
+                        </div>
+                        <div class="comment-text">The character development in Act II feels really strong. Sarah's transformation is believable and well-paced. Maybe we could add a bit more tension in the dialogue between Sarah and Elena?</div>
+                    </div>
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">Elena Rodriguez</span>
+                            <span class="comment-time">1 day ago</span>
+                        </div>
+                        <div class="comment-text">Love the overall concept! The journalism backdrop gives it authenticity. I think the opening scene could be more dynamic - maybe start with Sarah in the middle of chasing a lead?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="mainApp" style="display: none;">
+        <div class="header">
+            <h1>📝 ScriptCraft</h1>
+            <div class="header-actions">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span id="userName">User</span>
+                </div>
+                <button class="btn btn-primary" onclick="toggleCollaborationPanel()">👥 Collaborate</button>
+                <div class="export-dropdown">
+                    <button class="btn btn-primary" onclick="toggleExportMenu()">📤 Export ▼</button>
+                    <div class="export-menu" id="exportMenu">
+                        <div class="export-option" onclick="exportToGoogleDocs()">
+                            <span class="export-icon">📄</span>
+                            <div>
+                                <div class="export-title">Google Docs</div>
+                                <div class="export-desc">Open in Google Docs</div>
+                            </div>
+                        </div>
+                        <div class="export-option" onclick="exportToWord()">
+                            <span class="export-icon">📝</span>
+                            <div>
+                                <div class="export-title">Microsoft Word</div>
+                                <div class="export-desc">Download as .docx</div>
+                            </div>
+                        </div>
+                        <div class="export-option" onclick="exportToPDF()">
+                            <span class="export-icon">📋</span>
+                            <div>
+                                <div class="export-title">PDF Document</div>
+                                <div class="export-desc">Professional format</div>
+                            </div>
+                        </div>
+                        <div class="export-option" onclick="exportToFinalDraft()">
+                            <span class="export-icon">🎬</span>
+                            <div>
+                                <div class="export-title">Final Draft</div>
+                                <div class="export-desc">Industry standard .fdx</div>
+                            </div>
+                        </div>
+                        <div class="export-option" onclick="exportToFountain()">
+                            <span class="export-icon">⛲</span>
+                            <div>
+                                <div class="export-title">Fountain</div>
+                                <div class="export-desc">Plain text markup</div>
+                            </div>
+                        </div>
+                        <div class="export-option" onclick="exportToHTML()">
+                            <span class="export-icon">🌐</span>
+                            <div>
+                                <div class="export-title">Web Page</div>
+                                <div class="export-desc">Shareable HTML</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveScript()">Save</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="project-title">My Screenplay</div>
+                    <div class="project-info" id="projectInfo">Draft 1 • 15 pages • ~15 min runtime</div>
+                </div>
+
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('scenes')">📝 Scenes</button>
+                    <button class="nav-tab" onclick="switchTab('board')">🎬 Board</button>
+                    <button class="nav-tab" onclick="switchTab('characters')">👥 Cast</button>
+                    <button class="nav-tab" onclick="switchTab('notes')">📋 Notes</button>
+                    <button class="nav-tab" onclick="switchTab('stats')">📊 Stats</button>
+                </div>
+
+                <div class="scenes-list" id="scenesList" style="display: block;">
+                    <div class="scene-item active" onclick="selectScene(0)">
+                        <div class="scene-title">Scene 1</div>
+                        <div class="scene-location">INT. COFFEE SHOP - DAY</div>
+                    </div>
+                    <div class="scene-item" onclick="selectScene(1)">
+                        <div class="scene-title">Scene 2</div>
+                        <div class="scene-location">EXT. PARK - AFTERNOON</div>
+                    </div>
+                </div>
+
+                <!-- Scene Board -->
+                <div class="scene-board" id="sceneBoard" style="display: none;">
+                    <div class="board-header">
+                        <h2 class="board-title">Scene Board</h2>
+                        <div class="board-controls">
+                            <div class="view-toggle">
+                                <button class="view-btn active" onclick="setBoardView('grid')">Grid</button>
+                                <button class="view-btn" onclick="setBoardView('timeline')">Timeline</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="scene-cards-container" id="sceneCardsContainer">
+                        <div class="scene-card" draggable="true" data-scene="0">
+                            <div class="scene-card-header">
+                                <div class="scene-card-number">1</div>
+                                <div class="scene-card-act act-1">Act I</div>
+                            </div>
+                            <div class="scene-card-title">Opening Scene</div>
+                            <div class="scene-card-location">INT. COFFEE SHOP - DAY</div>
+                            <div class="scene-card-description">Sarah sits alone, typing furiously on her laptop. The weight of her dreams and struggles are evident in her focused expression.</div>
+                            <div class="scene-card-stats">
+                                <span>~2 min</span>
+                                <span>3 characters</span>
+                            </div>
+                        </div>
+                        
+                        <div class="scene-card" draggable="true" data-scene="1">
+                            <div class="scene-card-header">
+                                <div class="scene-card-number">2</div>
+                                <div class="scene-card-act act-1">Act I</div>
+                            </div>
+                            <div class="scene-card-title">The Meeting</div>
+                            <div class="scene-card-location">EXT. PARK - AFTERNOON</div>
+                            <div class="scene-card-description">Sarah meets Marcus for the first time. Their conversation reveals the central conflict and sets the story in motion.</div>
+                            <div class="scene-card-stats">
+                                <span>~3 min</span>
+                                <span>2 characters</span>
+                            </div>
+                        </div>
+                        
+                        <div class="add-scene-card" onclick="addNewSceneFromBoard()">
+                            <div class="add-scene-icon">+</div>
+                            <div class="add-scene-text">Add New Scene</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-scene-btn" onclick="addNewScene()">+ Add New Scene</button>
+
+                <div class="characters-list" id="charactersList" style="display: none;">
+                    <div class="character-item active" onclick="selectCharacter(0)">
+                        <div class="character-avatar-container">
+                            <span>SM</span>
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Sarah Mitchell</div>
+                            <div class="character-role">Protagonist</div>
+                            <div class="character-description">A determined young writer struggling to find her voice...</div>
+                        </div>
+                    </div>
+                    <div class="character-item" onclick="selectCharacter(1)">
+                        <div class="character-avatar-container">
+                            <span>MC</span>
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Marcus Chen</div>
+                            <div class="character-role">Supporting</div>
+                            <div class="character-description">Sarah's mentor and experienced journalist...</div>
+                        </div>
+                    </div>
+                    <div class="character-item" onclick="selectCharacter(2)">
+                        <div class="character-avatar-container">
+                            <span>ER</span>
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Elena Rodriguez</div>
+                            <div class="character-role">Antagonist</div>
+                            <div class="character-description">Rival writer competing for the same opportunity...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-scene-btn" id="addCharacterBtn" onclick="addNewCharacter()" style="display: none;">+ Add New Character</button>
+
+                <div class="notes-list" id="notesList" style="display: none;">
+                    <div class="note-item yellow" onclick="selectNote(0)">
+                        <div class="note-title">World Building</div>
+                        <div class="note-preview">The story takes place in modern-day Chicago, focusing on the journalism industry...</div>
+                        <div class="note-date">2 hours ago</div>
+                    </div>
+                    <div class="note-item blue" onclick="selectNote(1)">
+                        <div class="note-title">Character Relationships</div>
+                        <div class="note-preview">Sarah and Marcus have a mentor-student dynamic that evolves throughout...</div>
+                        <div class="note-date">1 day ago</div>
+                    </div>
+                    <div class="note-item green" onclick="selectNote(2)">
+                        <div class="note-title">Plot Points</div>
+                        <div class="note-preview">Key story beats: Inciting incident, first plot point, midpoint...</div>
+                        <div class="note-date">3 days ago</div>
+                    </div>
+                </div>
+
+                <button class="add-scene-btn" id="addNoteBtn" onclick="addNewNote()" style="display: none;">+ Add New Note</button>
+
+                <!-- Statistics Panel -->
+                <div class="statistics-panel" id="statisticsPanel" style="display: none;">
+                    <div class="stats-header">
+                        <h2 class="stats-title">📊 Script Statistics</h2>
+                        <p class="stats-subtitle">Professional metrics for your screenplay</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card pages">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-value" id="totalPages">15</div>
+                            <div class="stat-label">Total Pages</div>
+                        </div>
+                        
+                        <div class="stat-card runtime">
+                            <div class="stat-icon">⏱️</div>
+                            <div class="stat-value" id="estimatedRuntime">15</div>
+                            <div class="stat-label">Est. Runtime (min)</div>
+                        </div>
+                        
+                        <div class="stat-card scenes">
+                            <div class="stat-icon">🎬</div>
+                            <div class="stat-value" id="totalScenes">8</div>
+                            <div class="stat-label">Total Scenes</div>
+                        </div>
+                        
+                        <div class="stat-card characters">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-value" id="speakingCharacters">3</div>
+                            <div class="stat-label">Speaking Roles</div>
+                        </div>
+                        
+                        <div class="stat-card words">
+                            <div class="stat-icon">📝</div>
+                            <div class="stat-value" id="totalWords">2,847</div>
+                            <div class="stat-label">Total Words</div>
+                        </div>
+                        
+                        <div class="stat-card dialogue">
+                            <div class="stat-icon">💬</div>
+                            <div class="stat-value" id="dialoguePercentage">65%</div>
+                            <div class="stat-label">Dialogue Ratio</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-charts">
+                        <div class="chart-card">
+                            <h3 class="chart-title">Content Breakdown</h3>
+                            <div class="progress-label">
+                                <span>Dialogue</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill dialogue" style="width: 65%"></div>
+                            </div>
+                            
+                            <div class="progress-label">
+                                <span>Action/Description</span>
+                                <span>35%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill action" style="width: 35%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <h3 class="chart-title">Three-Act Structure</h3>
+                            <div class="act-breakdown">
+                                <div class="act-segment act-1">Act I<br>25%</div>
+                                <div class="act-segment act-2" style="flex: 2;">Act II<br>50%</div>
+                                <div class="act-segment act-3">Act III<br>25%</div>
+                            </div>
+                            <div class="act-info">
+                                <span>Setup: 4 pages</span>
+                                <span>Confrontation: 8 pages</span>
+                                <span>Resolution: 3 pages</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-toolbar">
+                    <select class="format-select" id="formatSelect" onchange="changeFormat()">
+                        <option value="action">Action</option>
+                        <option value="scene-heading">Scene Heading</option>
+                        <option value="character">Character</option>
+                        <option value="dialogue">Dialogue</option>
+                        <option value="parenthetical">Parenthetical</option>
+                    </select>
+                    <button class="btn" onclick="toggleSidebar()">☰ Menu</button>
+                </div>
+
+                <div class="scene-image-container" id="sceneImageContainer">
+                    <div class="scene-image-placeholder">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>Add scene reference image</div>
+                        <div style="font-size: 11px; margin-top: 4px;">Click to upload or drag & drop</div>
+                    </div>
+                    <div class="scene-upload-overlay" style="display: none;">
+                        <button class="scene-upload-btn" onclick="uploadSceneImage()" title="Upload Image">📷</button>
+                        <button class="scene-upload-btn" onclick="removeSceneImage()" title="Remove Image">🗑️</button>
+                    </div>
+                    <input type="file" id="sceneImageInput" class="image-upload-input" accept="image/*" onchange="handleSceneImageUpload(event)">
+                </div>
+
+                <div class="editor" id="editor">
+                    <div class="script-line scene-heading">
+                        <textarea class="script-input" placeholder="INT. COFFEE SHOP - DAY" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStatistics()">INT. COFFEE SHOP - DAY</textarea>
+                    </div>
+                    <div class="script-line action">
+                        <textarea class="script-input" placeholder="Describe the action..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStatistics()">SARAH, a young writer in her twenties, sits at a corner table typing furiously on her laptop. Steam rises from her untouched coffee.</textarea>
+                    </div>
+                    <div class="script-line character">
+                        <textarea class="script-input" placeholder="CHARACTER NAME" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStatistics()">SARAH</textarea>
+                    </div>
+                    <div class="script-line dialogue">
+                        <textarea class="script-input" placeholder="Character dialogue..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStatistics()">This story isn't working. I need something more... authentic.</textarea>
+                    </div>
+                </div>
+
+                <div class="character-details" id="characterDetails" style="display: none;">
+                    <div class="character-form">
+                        <h2 style="margin-bottom: 24px; color: #1e293b;">Character Profile</h2>
+                        
+                        <div class="image-upload-section">
+                            <div class="image-preview" id="characterImagePreview">
+                                <span id="characterInitials">SM</span>
+                            </div>
+                            <div>
+                                <button class="image-upload-btn" onclick="uploadCharacterImage()">📷 Upload Photo</button>
+                                <button class="image-remove-btn" id="removeCharacterImageBtn" onclick="removeCharacterImage()" style="display: none;">🗑️ Remove</button>
+                            </div>
+                            <div class="image-upload-hint">Recommended: 400x400px, JPG or PNG</div>
+                            <input type="file" id="characterImageInput" class="image-upload-input" accept="image/*" onchange="handleCharacterImageUpload(event)">
+                        </div>
+                        
+                        <div class="character-stats">
+                            <div class="stat-item">
+                                <div class="stat-number" id="dialogueCount">23</div>
+                                <div class="stat-label">Lines of Dialogue</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="sceneCount">8</div>
+                                <div class="stat-label">Scenes Appeared</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Character Name</label>
+                            <input type="text" class="form-input" id="characterName" value="Sarah Mitchell" oninput="updateCharacter()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Role</label>
+                            <select class="form-input" id="characterRole" onchange="updateCharacter()">
+                                <option value="protagonist">Protagonist</option>
+                                <option value="antagonist">Antagonist</option>
+                                <option value="supporting">Supporting</option>
+                                <option value="minor">Minor</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Age</label>
+                            <input type="text" class="form-input" id="characterAge" value="26" oninput="updateCharacter()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Occupation</label>
+                            <input type="text" class="form-input" id="characterOccupation" value="Freelance Writer" oninput="updateCharacter()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Physical Description</label>
+                            <textarea class="form-input form-textarea" id="characterPhysical" oninput="updateCharacter()">Medium height, curly brown hair, expressive green eyes. Often wears vintage band t-shirts and carries a worn leather messenger bag.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Personality</label>
+                            <textarea class="form-input form-textarea" id="characterPersonality" oninput="updateCharacter()">Passionate and determined, but struggles with self-doubt. Quick-witted with a dry sense of humor. Tends to overthink situations and can be stubborn when pursuing her goals.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Background</label>
+                            <textarea class="form-input form-textarea" id="characterBackground" oninput="updateCharacter()">Grew up in a small town, moved to the city to pursue her writing dreams. Graduated with a journalism degree but has been struggling to find steady work. Lives in a tiny apartment and works part-time at a bookstore.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Goals & Motivations</label>
+                            <textarea class="form-input form-textarea" id="characterGoals" oninput="updateCharacter()">Wants to write a story that matters and makes a real impact. Driven by a desire to prove herself and overcome the financial struggles that have defined her adult life.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Character Arc</label>
+                            <textarea class="form-input form-textarea" id="characterArc" oninput="updateCharacter()">Begins insecure and reactive, learns to trust her instincts and voice. Transforms from someone who writes what she thinks others want to hear into someone who writes her authentic truth.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note-details" id="noteDetails" style="display: none;">
+                    <div class="note-form">
+                        <div class="note-header">
+                            <h2 style="margin: 0; color: #1e293b;">Note Editor</h2>
+                            <div class="note-color-picker">
+                                <div class="color-option yellow active" onclick="changeNoteColor('yellow')" title="Yellow"></div>
+                                <div class="color-option blue" onclick="changeNoteColor('blue')" title="Blue"></div>
+                                <div class="color-option green" onclick="changeNoteColor('green')" title="Green"></div>
+                                <div class="color-option pink" onclick="changeNoteColor('pink')" title="Pink"></div>
+                                <div class="color-option purple" onclick="changeNoteColor('purple')" title="Purple"></div>
+                                <div class="color-option orange" onclick="changeNoteColor('orange')" title="Orange"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Note Title</label>
+                            <input type="text" class="form-input" id="noteTitle" value="World Building" oninput="updateNote()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-input" id="noteCategory" onchange="updateNote()">
+                                <option value="world-building">World Building</option>
+                                <option value="character-notes">Character Notes</option>
+                                <option value="plot-points">Plot Points</option>
+                                <option value="research">Research</option>
+                                <option value="dialogue-ideas">Dialogue Ideas</option>
+                                <option value="themes">Themes</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Content</label>
+                            <textarea class="form-input note-content-editor" id="noteContent" oninput="updateNote()" placeholder="Write your notes here...">The story takes place in modern-day Chicago, focusing on the journalism industry. The city's diverse neighborhoods and rich cultural landscape provide the perfect backdrop for Sarah's journey of self-discovery.
+
+Key locations:
+- The Tribune building (where Marcus works)
+- Lincoln Park (where Sarah goes to think)
+- The small bookstore where Sarah works part-time
+- Sarah's cramped studio apartment in Wicker Park
+
+The journalism world is portrayed as both inspiring and cutthroat, with traditional media struggling against digital disruption. This creates tension and urgency in the characters' professional lives.</textarea>
+                        </div>
+
+                        <div class="note-stats">
+                            <div class="stat-item">
+                                <div class="stat-number" id="noteWordCount">127</div>
+                                <div class="stat-label">Words</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="noteCharCount">756</div>
+                                <div class="stat-label">Characters</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span id="statusBarLeft">Page 1 of 15</span>
+            <span id="statusBarRight">Words: 1,247 • Characters: 6,891 • ~15 min runtime</span>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let isSignUpMode = false;
+        let currentScene = 0;
+        let currentCharacter = 0;
+        let currentNote = 0;
+        let currentTab = 'scenes';
+        let boardView = 'grid';
+        let draggedElement = null;
+        let scenes = [
+            { 
+                title: "Scene 1", 
+                location: "INT. COFFEE SHOP - DAY", 
+                image: null,
+                description: "Sarah sits alone, typing furiously on her laptop. The weight of her dreams and struggles are evident in her focused expression.",
+                act: 1,
+                estimatedMinutes: 2,
+                characterCount: 3
+            },
+            { 
+                title: "Scene 2", 
+                location: "EXT. PARK - AFTERNOON", 
+                image: null,
+                description: "Sarah meets Marcus for the first time. Their conversation reveals the central conflict and sets the story in motion.",
+                act: 1,
+                estimatedMinutes: 3,
+                characterCount: 2
+            }
+        ];
+        let notes = [
+            {
+                title: "World Building",
+                category: "world-building",
+                color: "yellow",
+                content: "The story takes place in modern-day Chicago, focusing on the journalism industry. The city's diverse neighborhoods and rich cultural landscape provide the perfect backdrop for Sarah's journey of self-discovery.\n\nKey locations:\n- The Tribune building (where Marcus works)\n- Lincoln Park (where Sarah goes to think)\n- The small bookstore where Sarah works part-time\n- Sarah's cramped studio apartment in Wicker Park\n\nThe journalism world is portrayed as both inspiring and cutthroat, with traditional media struggling against digital disruption. This creates tension and urgency in the characters' professional lives.",
+                createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                title: "Character Relationships",
+                category: "character-notes",
+                color: "blue",
+                content: "Sarah and Marcus have a mentor-student dynamic that evolves throughout the story. Initially, Sarah is intimidated by Marcus's experience and reputation, but gradually learns to trust his guidance while maintaining her own voice.\n\nKey relationship dynamics:\n- Sarah & Marcus: Mentor/student evolving to mutual respect\n- Sarah & Elena: Professional rivalry with underlying similarities\n- Marcus & Elena: Generational clash in journalism approaches\n\nThe relationships drive character growth and create natural conflict points in the narrative.",
+                createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+                updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                title: "Plot Points",
+                category: "plot-points",
+                color: "green",
+                content: "Key story beats that drive the narrative forward:\n\n1. Inciting Incident: Sarah discovers a potential corruption story\n2. First Plot Point: Marcus agrees to mentor her investigation\n3. Midpoint: Sarah uncovers deeper connections, Elena becomes involved\n4. Crisis: Sarah must choose between safe story and dangerous truth\n5. Climax: Confrontation with corrupt officials\n6. Resolution: Sarah finds her authentic voice as a journalist\n\nEach beat should raise stakes and deepen character development.",
+                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+            }
+        ];
+        let characters = [
+            {
+                name: "Sarah Mitchell",
+                role: "protagonist",
+                age: "26",
+                occupation: "Freelance Writer",
+                physical: "Medium height, curly brown hair, expressive green eyes. Often wears vintage band t-shirts and carries a worn leather messenger bag.",
+                personality: "Passionate and determined, but struggles with self-doubt. Quick-witted with a dry sense of humor. Tends to overthink situations and can be stubborn when pursuing her goals.",
+                background: "Grew up in a small town, moved to the city to pursue her writing dreams. Graduated with a journalism degree but has been struggling to find steady work. Lives in a tiny apartment and works part-time at a bookstore.",
+                goals: "Wants to write a story that matters and makes a real impact. Driven by a desire to prove herself and overcome the financial struggles that have defined her adult life.",
+                arc: "Begins insecure and reactive, learns to trust her instincts and voice. Transforms from someone who writes what she thinks others want to hear into someone who writes her authentic truth.",
+                dialogueCount: 23,
+                sceneCount: 8,
+                image: null,
+                initials: "SM"
+            },
+            {
+                name: "Marcus Chen",
+                role: "supporting",
+                age: "45",
+                occupation: "Senior Journalist",
+                physical: "Tall and lean, salt-and-pepper hair, wire-rimmed glasses. Always impeccably dressed in tailored suits.",
+                personality: "Wise and patient mentor figure. Has a calm demeanor but can be firm when necessary. Values integrity above all else.",
+                background: "Veteran journalist with 20 years of experience. Has won several awards for investigative reporting. Recently became Sarah's mentor.",
+                goals: "Wants to pass on his knowledge to the next generation while continuing to pursue meaningful stories.",
+                arc: "Learns to balance his protective instincts with allowing Sarah to make her own mistakes and grow.",
+                dialogueCount: 15,
+                sceneCount: 5,
+                image: null,
+                initials: "MC"
+            },
+            {
+                name: "Elena Rodriguez",
+                role: "antagonist",
+                age: "28",
+                occupation: "Staff Writer",
+                physical: "Petite but commanding presence, sleek black hair, always perfectly styled. Favors designer clothing.",
+                personality: "Ambitious and competitive. Charming on the surface but ruthless underneath. Highly intelligent and strategic.",
+                background: "Comes from a wealthy family, graduated from an Ivy League school. Has connections that have helped her career.",
+                goals: "Wants to secure the promotion that Sarah is also competing for. Will use any means necessary to succeed.",
+                arc: "Initially appears to have everything, but reveals her own insecurities and the pressure she faces.",
+                dialogueCount: 12,
+                sceneCount: 4,
+                image: null,
+                initials: "ER"
+            }
+        ];
+
+        // Statistics calculation functions
+        function calculateScriptStatistics() {
+            const lines = document.querySelectorAll('.script-line');
+            let totalWords = 0;
+            let dialogueWords = 0;
+            let actionWords = 0;
+            let characterLines = 0;
+            
+            lines.forEach(line => {
+                const textarea = line.querySelector('.script-input');
+                const text = textarea.value.trim();
+                if (text) {
+                    const words = text.split(/\s+/).length;
+                    totalWords += words;
+                    
+                    const format = getCurrentFormat(line);
+                    if (format === 'dialogue') {
+                        dialogueWords += words;
+                    } else if (format === 'action') {
+                        actionWords += words;
+                    } else if (format === 'character') {
+                        characterLines++;
+                    }
+                }
+            });
+            
+            // Calculate pages (industry standard: ~250 words per page for screenplays)
+            const totalPages = Math.max(1, Math.ceil(totalWords / 250));
+            
+            // Calculate dialogue percentage
+            const dialoguePercentage = totalWords > 0 ? Math.round((dialogueWords / totalWords) * 100) : 0;
+            
+            // Count unique speaking characters
+            const speakingCharacters = characters.filter(char => char.dialogueCount > 0).length;
+            
+            return {
+                totalPages,
+                totalWords,
+                dialogueWords,
+                actionWords,
+                dialoguePercentage,
+                speakingCharacters,
+                totalScenes: scenes.length,
+                estimatedRuntime: totalPages // 1 page ≈ 1 minute
+            };
+        }
+
+        function updateStatistics() {
+            const stats = calculateScriptStatistics();
+            
+            // Update main statistics cards
+            document.getElementById('totalPages').textContent = stats.totalPages;
+            document.getElementById('estimatedRuntime').textContent = stats.estimatedRuntime;
+            document.getElementById('totalScenes').textContent = stats.totalScenes;
+            document.getElementById('speakingCharacters').textContent = stats.speakingCharacters;
+            document.getElementById('totalWords').textContent = stats.totalWords.toLocaleString();
+            document.getElementById('dialoguePercentage').textContent = stats.dialoguePercentage + '%';
+            
+            // Update progress bars
+            const dialogueFill = document.querySelector('.progress-fill.dialogue');
+            const actionFill = document.querySelector('.progress-fill.action');
+            if (dialogueFill && actionFill) {
+                dialogueFill.style.width = stats.dialoguePercentage + '%';
+                actionFill.style.width = (100 - stats.dialoguePercentage) + '%';
+                
+                // Update labels
+                const progressLabels = document.querySelectorAll('.progress-label span:last-child');
+                if (progressLabels.length >= 2) {
+                    progressLabels[0].textContent = stats.dialoguePercentage + '%';
+                    progressLabels[1].textContent = (100 - stats.dialoguePercentage) + '%';
+                }
+            }
+            
+            // Update status bar
+            document.getElementById('statusBarLeft').textContent = `Page 1 of ${stats.totalPages}`;
+            document.getElementById('statusBarRight').textContent = 
+                `Words: ${stats.totalWords.toLocaleString()} • Characters: ${(stats.totalWords * 5).toLocaleString()} • ~${stats.estimatedRuntime} min runtime`;
+            
+            // Update project info
+            document.getElementById('projectInfo').textContent = 
+                `Draft 1 • ${stats.totalPages} pages • ~${stats.estimatedRuntime} min runtime`;
+        }
+
+        // Scene Board Functions
+        function setBoardView(view) {
+            boardView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'timeline') {
+                // Switch to timeline view (could be implemented as a horizontal layout)
+                document.getElementById('sceneCardsContainer').style.gridTemplateColumns = '1fr';
+            } else {
+                // Grid view
+                document.getElementById('sceneCardsContainer').style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+            }
+        }
+
+        function addNewSceneFromBoard() {
+            addNewScene();
+            updateSceneBoard();
+        }
+
+        function updateSceneBoard() {
+            const container = document.getElementById('sceneCardsContainer');
+            const addCard = container.querySelector('.add-scene-card');
+            
+            // Clear existing scene cards but keep the add card
+            const sceneCards = container.querySelectorAll('.scene-card');
+            sceneCards.forEach(card => card.remove());
+            
+            // Add scene cards
+            scenes.forEach((scene, index) => {
+                const card = createSceneCard(scene, index);
+                container.insertBefore(card, addCard);
+            });
+        }
+
+        function createSceneCard(scene, index) {
+            const card = document.createElement('div');
+            card.className = 'scene-card';
+            card.draggable = true;
+            card.dataset.scene = index;
+            
+            const actClass = scene.act === 1 ? 'act-1' : scene.act === 2 ? 'act-2' : 'act-3';
+            const actLabel = `Act ${scene.act === 1 ? 'I' : scene.act === 2 ? 'II' : 'III'}`;
+            
+            card.innerHTML = `
+                <div class="scene-card-header">
+                    <div class="scene-card-number">${index + 1}</div>
+                    <div class="scene-card-act ${actClass}">${actLabel}</div>
+                </div>
+                <div class="scene-card-title">${scene.title}</div>
+                <div class="scene-card-location">${scene.location}</div>
+                <div class="scene-card-description">${scene.description || 'No description yet...'}</div>
+                <div class="scene-card-stats">
+                    <span>~${scene.estimatedMinutes || 2} min</span>
+                    <span>${scene.characterCount || 0} characters</span>
+                </div>
+            `;
+            
+            // Add drag and drop event listeners
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragover', handleDragOver);
+            card.addEventListener('drop', handleDrop);
+            card.addEventListener('dragend', handleDragEnd);
+            card.addEventListener('click', () => selectSceneFromBoard(index));
+            
+            return card;
+        }
+
+        function selectSceneFromBoard(index) {
+            // Switch to scenes tab and select the scene
+            switchTab('scenes');
+            selectScene(index);
+        }
+
+        // Drag and Drop Functions
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            
+            if (this !== draggedElement) {
+                this.classList.add('drop-target');
+            }
+            
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            if (draggedElement !== this) {
+                const draggedIndex = parseInt(draggedElement.dataset.scene);
+                const targetIndex = parseInt(this.dataset.scene);
+                
+                // Reorder scenes array
+                const draggedScene = scenes.splice(draggedIndex, 1)[0];
+                scenes.splice(targetIndex, 0, draggedScene);
+                
+                // Update scene board
+                updateSceneBoard();
+                updateScenesUI();
+                
+                showExportStatus('Scenes reordered successfully!');
+            }
+            
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            
+            // Remove drop-target class from all cards
+            document.querySelectorAll('.scene-card').forEach(card => {
+                card.classList.remove('drop-target');
+            });
+            
+            draggedElement = null;
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addNewLine(event.target);
+            } else if (event.key === 'Tab') {
+                event.preventDefault();
+                cycleFormat(event.target);
+            }
+        }
+
+        function addNewLine(currentTextarea) {
+            const currentLine = currentTextarea.closest('.script-line');
+            const currentFormat = getCurrentFormat(currentLine);
+            
+            let nextFormat = 'action';
+            if (currentFormat === 'scene-heading') nextFormat = 'action';
+            else if (currentFormat === 'action') nextFormat = 'character';
+            else if (currentFormat === 'character') nextFormat = 'dialogue';
+            else if (currentFormat === 'dialogue') nextFormat = 'action';
+            else if (currentFormat === 'parenthetical') nextFormat = 'dialogue';
+
+            const newLine = createScriptLine(nextFormat);
+            currentLine.insertAdjacentElement('afterend', newLine);
+            newLine.querySelector('.script-input').focus();
+            
+            // Update statistics after adding new line
+            setTimeout(updateStatistics, 100);
+        }
+
+        function createScriptLine(format) {
+            const line = document.createElement('div');
+            line.className = `script-line ${format}`;
+            
+            const textarea = document.createElement('textarea');
+            textarea.className = 'script-input';
+            textarea.placeholder = getPlaceholder(format);
+            textarea.onkeydown = handleKeyDown;
+            textarea.oninput = function() { 
+                autoResize(this); 
+                updateStatistics();
+            };
+            
+            line.appendChild(textarea);
+            return line;
+        }
+
+        function getPlaceholder(format) {
+            const placeholders = {
+                'scene-heading': 'INT./EXT. LOCATION - TIME',
+                'action': 'Describe the action...',
+                'character': 'CHARACTER NAME',
+                'dialogue': 'Character dialogue...',
+                'parenthetical': '(parenthetical)'
+            };
+            return placeholders[format] || '';
+        }
+
+        function getCurrentFormat(line) {
+            const classes = line.className.split(' ');
+            return classes.find(cls => cls !== 'script-line') || 'action';
+        }
+
+        function cycleFormat(textarea) {
+            const line = textarea.closest('.script-line');
+            const formats = ['action', 'scene-heading', 'character', 'dialogue', 'parenthetical'];
+            const currentFormat = getCurrentFormat(line);
+            const currentIndex = formats.indexOf(currentFormat);
+            const nextFormat = formats[(currentIndex + 1) % formats.length];
+            
+            line.className = `script-line ${nextFormat}`;
+            textarea.placeholder = getPlaceholder(nextFormat);
+            
+            document.getElementById('formatSelect').value = nextFormat;
+            updateStatistics();
+        }
+
+        function changeFormat() {
+            const select = document.getElementById('formatSelect');
+            const activeElement = document.activeElement;
+            
+            if (activeElement && activeElement.classList.contains('script-input')) {
+                const line = activeElement.closest('.script-line');
+                line.className = `script-line ${select.value}`;
+                activeElement.placeholder = getPlaceholder(select.value);
+                updateStatistics();
+            }
+        }
+
+        function selectScene(index) {
+            const items = document.querySelectorAll('.scene-item');
+            items.forEach(item => item.classList.remove('active'));
+            items[index].classList.add('active');
+            currentScene = index;
+            
+            // Update scene image display
+            updateSceneImageDisplay();
+        }
+
+        function updateSceneImageDisplay() {
+            const scene = scenes[currentScene];
+            const container = document.getElementById('sceneImageContainer');
+            
+            if (scene && scene.image) {
+                container.innerHTML = `
+                    <img src="${scene.image}" alt="${scene.title}">
+                    <div class="scene-upload-overlay">
+                        <button class="scene-upload-btn" onclick="uploadSceneImage()" title="Change Image">📷</button>
+                        <button class="scene-upload-btn" onclick="removeSceneImage()" title="Remove Image">🗑️</button>
+                    </div>
+                    <input type="file" id="sceneImageInput" class="image-upload-input" accept="image/*" onchange="handleSceneImageUpload(event)">
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="scene-image-placeholder">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>Add scene reference image</div>
+                        <div style="font-size: 11px; margin-top: 4px;">Click to upload or drag & drop</div>
+                    </div>
+                    <div class="scene-upload-overlay" style="display: none;">
+                        <button class="scene-upload-btn" onclick="uploadSceneImage()" title="Upload Image">📷</button>
+                        <button class="scene-upload-btn" onclick="removeSceneImage()" title="Remove Image">🗑️</button>
+                    </div>
+                    <input type="file" id="sceneImageInput" class="image-upload-input" accept="image/*" onchange="handleSceneImageUpload(event)">
+                `;
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Hide all content areas
+            document.getElementById('scenesList').style.display = 'none';
+            document.getElementById('sceneBoard').style.display = 'none';
+            document.getElementById('charactersList').style.display = 'none';
+            document.getElementById('notesList').style.display = 'none';
+            document.getElementById('statisticsPanel').style.display = 'none';
+            document.getElementById('addCharacterBtn').style.display = 'none';
+            document.getElementById('addNoteBtn').style.display = 'none';
+            document.querySelector('.add-scene-btn').style.display = 'none';
+            document.getElementById('editor').style.display = 'none';
+            document.getElementById('characterDetails').style.display = 'none';
+            document.getElementById('noteDetails').style.display = 'none';
+            document.getElementById('formatSelect').style.display = 'none';
+            
+            // Show appropriate content
+            if (tab === 'scenes') {
+                document.getElementById('scenesList').style.display = 'block';
+                document.querySelector('.add-scene-btn').style.display = 'block';
+                document.getElementById('editor').style.display = 'block';
+                document.getElementById('formatSelect').style.display = 'block';
+            } else if (tab === 'board') {
+                document.getElementById('sceneBoard').style.display = 'block';
+                updateSceneBoard();
+            } else if (tab === 'characters') {
+                document.getElementById('charactersList').style.display = 'block';
+                document.getElementById('addCharacterBtn').style.display = 'block';
+                document.getElementById('characterDetails').style.display = 'block';
+                loadCharacterDetails(currentCharacter);
+            } else if (tab === 'notes') {
+                document.getElementById('notesList').style.display = 'block';
+                document.getElementById('addNoteBtn').style.display = 'block';
+                document.getElementById('noteDetails').style.display = 'block';
+                loadNoteDetails(currentNote);
+            } else if (tab === 'stats') {
+                document.getElementById('statisticsPanel').style.display = 'block';
+                updateStatistics();
+            }
+        }
+
+        function selectCharacter(index) {
+            const items = document.querySelectorAll('.character-item');
+            items.forEach(item => item.classList.remove('active'));
+            items[index].classList.add('active');
+            currentCharacter = index;
+            loadCharacterDetails(index);
+        }
+
+        function loadCharacterDetails(index) {
+            const character = characters[index];
+            if (!character) return;
+            
+            document.getElementById('characterName').value = character.name;
+            document.getElementById('characterRole').value = character.role;
+            document.getElementById('characterAge').value = character.age;
+            document.getElementById('characterOccupation').value = character.occupation;
+            document.getElementById('characterPhysical').value = character.physical;
+            document.getElementById('characterPersonality').value = character.personality;
+            document.getElementById('characterBackground').value = character.background;
+            document.getElementById('characterGoals').value = character.goals;
+            document.getElementById('characterArc').value = character.arc;
+            document.getElementById('dialogueCount').textContent = character.dialogueCount;
+            document.getElementById('sceneCount').textContent = character.sceneCount;
+            
+            // Update character image
+            const imagePreview = document.getElementById('characterImagePreview');
+            const initialsSpan = document.getElementById('characterInitials');
+            const removeBtn = document.getElementById('removeCharacterImageBtn');
+            
+            if (character.image) {
+                imagePreview.innerHTML = `<img src="${character.image}" alt="${character.name}">`;
+                removeBtn.style.display = 'inline-block';
+            } else {
+                imagePreview.innerHTML = `<span id="characterInitials">${character.initials}</span>`;
+                removeBtn.style.display = 'none';
+            }
+        }
+
+        function uploadCharacterImage() {
+            document.getElementById('characterImageInput').click();
+        }
+
+        function handleCharacterImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showExportStatus('Please select a valid image file', true);
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showExportStatus('Image size must be less than 5MB', true);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                
+                // Update character data
+                characters[currentCharacter].image = imageData;
+                
+                // Update preview
+                const imagePreview = document.getElementById('characterImagePreview');
+                imagePreview.innerHTML = `<img src="${imageData}" alt="${characters[currentCharacter].name}">`;
+                
+                // Show remove button
+                document.getElementById('removeCharacterImageBtn').style.display = 'inline-block';
+                
+                // Update character list
+                updateCharacterAvatar(currentCharacter, imageData);
+                
+                showExportStatus('Character image uploaded successfully!');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function removeCharacterImage() {
+            const character = characters[currentCharacter];
+            character.image = null;
+            
+            // Update preview
+            const imagePreview = document.getElementById('characterImagePreview');
+            imagePreview.innerHTML = `<span id="characterInitials">${character.initials}</span>`;
+            
+            // Hide remove button
+            document.getElementById('removeCharacterImageBtn').style.display = 'none';
+            
+            // Update character list
+            updateCharacterAvatar(currentCharacter, null);
+            
+            showExportStatus('Character image removed');
+        }
+
+        function updateCharacterAvatar(index, imageData) {
+            const characterItems = document.querySelectorAll('.character-item');
+            if (characterItems[index]) {
+                const avatarContainer = characterItems[index].querySelector('.character-avatar-container');
+                if (imageData) {
+                    avatarContainer.innerHTML = `<img src="${imageData}" alt="${characters[index].name}">`;
+                } else {
+                    avatarContainer.innerHTML = `<span>${characters[index].initials}</span>`;
+                }
+            }
+        }
+
+        function uploadSceneImage() {
+            document.getElementById('sceneImageInput').click();
+        }
+
+        function handleSceneImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showExportStatus('Please select a valid image file', true);
+                return;
+            }
+            
+            // Validate file size (max 10MB for scene images)
+            if (file.size > 10 * 1024 * 1024) {
+                showExportStatus('Image size must be less than 10MB', true);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                
+                // Update scene data
+                scenes[currentScene].image = imageData;
+                
+                // Update scene image container
+                const container = document.getElementById('sceneImageContainer');
+                container.innerHTML = `
+                    <img src="${imageData}" alt="${scenes[currentScene].title}">
+                    <div class="scene-upload-overlay">
+                        <button class="scene-upload-btn" onclick="uploadSceneImage()" title="Change Image">📷</button>
+                        <button class="scene-upload-btn" onclick="removeSceneImage()" title="Remove Image">🗑️</button>
+                    </div>
+                    <input type="file" id="sceneImageInput" class="image-upload-input" accept="image/*" onchange="handleSceneImageUpload(event)">
+                `;
+                
+                showExportStatus('Scene image uploaded successfully!');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function removeSceneImage() {
+            scenes[currentScene].image = null;
+            
+            // Reset scene image container
+            const container = document.getElementById('sceneImageContainer');
+            container.innerHTML = `
+                <div class="scene-image-placeholder">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div>Add scene reference image</div>
+                    <div style="font-size: 11px; margin-top: 4px;">Click to upload or drag & drop</div>
+                </div>
+                <div class="scene-upload-overlay" style="display: none;">
+                    <button class="scene-upload-btn" onclick="uploadSceneImage()" title="Upload Image">📷</button>
+                    <button class="scene-upload-btn" onclick="removeSceneImage()" title="Remove Image">🗑️</button>
+                </div>
+                <input type="file" id="sceneImageInput" class="image-upload-input" accept="image/*" onchange="handleSceneImageUpload(event)">
+            `;
+            
+            showExportStatus('Scene image removed');
+        }
+
+        // Add click handler for scene image container
+        document.addEventListener('DOMContentLoaded', function() {
+            const sceneContainer = document.getElementById('sceneImageContainer');
+            if (sceneContainer) {
+                sceneContainer.addEventListener('click', function(e) {
+                    if (e.target === sceneContainer || e.target.closest('.scene-image-placeholder')) {
+                        uploadSceneImage();
+                    }
+                });
+                
+                // Add drag and drop functionality
+                sceneContainer.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    sceneContainer.style.borderColor = '#4f46e5';
+                    sceneContainer.style.backgroundColor = '#f0f9ff';
+                });
+                
+                sceneContainer.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    sceneContainer.style.borderColor = '#d1d5db';
+                    sceneContainer.style.backgroundColor = '#f1f5f9';
+                });
+                
+                sceneContainer.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    sceneContainer.style.borderColor = '#d1d5db';
+                    sceneContainer.style.backgroundColor = '#f1f5f9';
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        const file = files[0];
+                        if (file.type.startsWith('image/')) {
+                            // Simulate file input change
+                            const input = document.getElementById('sceneImageInput');
+                            const dt = new DataTransfer();
+                            dt.items.add(file);
+                            input.files<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98d33b46c72399e6',t:'MTc2MDIzNjgxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
