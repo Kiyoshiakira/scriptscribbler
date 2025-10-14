@@ -527,18 +527,33 @@
             }
             const projectTitle = document.getElementById('projectTitle').value;
             const exportFormat = document.getElementById('exportFormat').value;
+            const exportContent = document.getElementById('exportContent').value;
             const integrationTarget = document.getElementById('integrationTarget').value;
-            const scriptData = collectScriptDataFromBlocks();
+            
+            let exportData = {};
+            
+            // Build export data based on content selection
+            if (exportContent === 'full' || exportContent === 'scenes') {
+                const scriptData = collectScriptDataFromBlocks();
+                exportData.scenes = sceneScripts;
+                exportData.script = scriptData;
+            }
+            
+            if (exportContent === 'full' || exportContent === 'notes') {
+                exportData.notes = notes;
+            }
+            
             const exportPackage = {
                 metadata: {
                     title: projectTitle,
                     exportType: selectedExportType,
                     format: exportFormat,
+                    content: exportContent,
                     target: integrationTarget,
                     exportedAt: new Date().toISOString(),
                     version: "1.0"
                 },
-                script: scriptData,
+                ...exportData,
                 integration: {
                     apiEndpoint: generateAPIEndpoint(),
                     webhookUrl: generateWebhookUrl(),
@@ -548,7 +563,7 @@
             showNotification('Preparing export...');
             setTimeout(() => {
                 downloadExport(exportPackage, exportFormat);
-                showNotification(`Successfully exported for ${integrationTarget}!`);
+                showNotification(`Successfully exported ${exportContent} for ${integrationTarget}!`);
                 closeExportModal();
             }, 2000);
         }
@@ -712,6 +727,9 @@
             // Hide all view containers
             document.getElementById('scriptView').style.display = 'none';
             document.getElementById('notesView').style.display = 'none';
+            document.getElementById('boardView').style.display = 'none';
+            document.getElementById('charactersView').style.display = 'none';
+            document.getElementById('statsView').style.display = 'none';
 
             // Show appropriate view
             if (tab === 'script') {
@@ -719,9 +737,321 @@
             } else if (tab === 'notes') {
                 document.getElementById('notesView').style.display = 'flex';
                 updateNotesList();
-            } else if (tab === 'board' || tab === 'characters' || tab === 'stats') {
-                showNotification(`${tab.charAt(0).toUpperCase() + tab.slice(1)} view coming soon!`);
+            } else if (tab === 'board') {
+                document.getElementById('boardView').style.display = 'flex';
+                updateSceneBoard();
+            } else if (tab === 'characters') {
+                document.getElementById('charactersView').style.display = 'flex';
+                updateCharactersView();
+            } else if (tab === 'stats') {
+                document.getElementById('statsView').style.display = 'flex';
+                updateStatsView();
             }
+        }
+
+        // Board View Functions
+        let boardViewType = 'grid';
+        let draggedSceneCard = null;
+
+        function updateSceneBoard() {
+            const container = document.getElementById('sceneCardsContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            // Get all scenes from sceneScripts
+            sceneScripts.forEach((sceneData, index) => {
+                const card = createSceneCard(index);
+                container.appendChild(card);
+            });
+            
+            // Add "Add New Scene" card
+            const addCard = document.createElement('div');
+            addCard.className = 'add-scene-card';
+            addCard.onclick = () => addNewSceneFromBoard();
+            addCard.innerHTML = `
+                <div class="add-scene-icon">+</div>
+                <div class="add-scene-text">Add New Scene</div>
+            `;
+            container.appendChild(addCard);
+        }
+
+        function createSceneCard(index) {
+            const card = document.createElement('div');
+            card.className = 'scene-card';
+            card.draggable = true;
+            card.dataset.scene = index;
+            
+            // Extract scene heading from first block if it exists
+            const sceneData = sceneScripts[index] || [];
+            const sceneHeading = sceneData.find(block => block.type === 'scene-heading');
+            const location = sceneHeading ? sceneHeading.text : `Scene ${index + 1}`;
+            
+            // Calculate basic stats
+            const wordCount = sceneData.reduce((sum, block) => {
+                return sum + (block.text ? block.text.split(/\s+/).length : 0);
+            }, 0);
+            const estimatedMinutes = Math.max(1, Math.round(wordCount / 150)); // rough estimate
+            
+            // Determine act based on scene position (simple thirds)
+            const totalScenes = sceneScripts.length;
+            let act = 1;
+            if (index >= totalScenes * 2/3) act = 3;
+            else if (index >= totalScenes / 3) act = 2;
+            
+            const actClass = act === 1 ? 'act-1' : act === 2 ? 'act-2' : 'act-3';
+            const actLabel = `Act ${act === 1 ? 'I' : act === 2 ? 'II' : 'III'}`;
+            
+            // Get first action block for description
+            const actionBlock = sceneData.find(block => block.type === 'action');
+            const description = actionBlock ? actionBlock.text.substring(0, 80) + '...' : 'No description yet...';
+            
+            card.innerHTML = `
+                <div class="scene-card-header">
+                    <div class="scene-card-number">${index + 1}</div>
+                    <div class="scene-card-act ${actClass}">${actLabel}</div>
+                </div>
+                <div class="scene-card-title">Scene ${index + 1}</div>
+                <div class="scene-card-location">${location}</div>
+                <div class="scene-card-description">${description}</div>
+                <div class="scene-card-stats">
+                    <span>~${estimatedMinutes} min</span>
+                    <span>${wordCount} words</span>
+                </div>
+            `;
+            
+            // Add drag and drop event listeners
+            card.addEventListener('dragstart', handleSceneDragStart);
+            card.addEventListener('dragover', handleSceneDragOver);
+            card.addEventListener('drop', handleSceneDrop);
+            card.addEventListener('dragend', handleSceneDragEnd);
+            card.addEventListener('click', () => selectSceneFromBoard(index));
+            
+            return card;
+        }
+
+        function handleSceneDragStart(e) {
+            draggedSceneCard = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleSceneDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            if (this !== draggedSceneCard && !this.classList.contains('add-scene-card')) {
+                this.classList.add('drop-target');
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleSceneDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            this.classList.remove('drop-target');
+            
+            if (draggedSceneCard !== this && !this.classList.contains('add-scene-card')) {
+                const fromIndex = parseInt(draggedSceneCard.dataset.scene);
+                const toIndex = parseInt(this.dataset.scene);
+                
+                // Swap scenes in the array
+                const temp = sceneScripts[fromIndex];
+                sceneScripts[fromIndex] = sceneScripts[toIndex];
+                sceneScripts[toIndex] = temp;
+                
+                // Update the board
+                updateSceneBoard();
+                rebuildSceneList();
+                showNotification('Scene order updated!');
+            }
+            
+            return false;
+        }
+
+        function handleSceneDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.scene-card').forEach(card => {
+                card.classList.remove('drop-target');
+            });
+        }
+
+        function selectSceneFromBoard(index) {
+            currentSceneIndex = index;
+            switchMainTab('script');
+            selectScene(index);
+        }
+
+        function addNewSceneFromBoard() {
+            addNewScene();
+            updateSceneBoard();
+        }
+
+        function setBoardView(view) {
+            boardViewType = view;
+            const container = document.getElementById('sceneCardsContainer');
+            const gridBtn = document.getElementById('gridViewBtn');
+            const timelineBtn = document.getElementById('timelineViewBtn');
+            
+            if (view === 'grid') {
+                container.classList.remove('timeline');
+                gridBtn.classList.add('active');
+                timelineBtn.classList.remove('active');
+            } else {
+                container.classList.add('timeline');
+                timelineBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+            }
+        }
+
+        // Characters View Functions
+        let characters = [];
+
+        function updateCharactersView() {
+            extractCharactersFromScript();
+            const grid = document.getElementById('charactersGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            
+            if (characters.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">No characters found. Characters will appear here once you add them to your script.</p>';
+                return;
+            }
+            
+            characters.forEach((char, index) => {
+                const card = createCharacterCard(char, index);
+                grid.appendChild(card);
+            });
+        }
+
+        function extractCharactersFromScript() {
+            const charMap = new Map();
+            
+            sceneScripts.forEach(sceneData => {
+                sceneData.forEach(block => {
+                    if (block.type === 'character' && block.text.trim()) {
+                        const name = block.text.trim();
+                        if (charMap.has(name)) {
+                            charMap.get(name).scenes++;
+                        } else {
+                            charMap.set(name, {
+                                name: name,
+                                scenes: 1,
+                                initials: getInitials(name)
+                            });
+                        }
+                    }
+                });
+            });
+            
+            characters = Array.from(charMap.values());
+        }
+
+        function getInitials(name) {
+            const parts = name.split(/\s+/);
+            if (parts.length >= 2) {
+                return parts[0][0] + parts[1][0];
+            }
+            return name.substring(0, 2);
+        }
+
+        function createCharacterCard(char, index) {
+            const card = document.createElement('div');
+            card.className = 'character-card';
+            
+            card.innerHTML = `
+                <div class="character-avatar">${char.initials.toUpperCase()}</div>
+                <div class="character-name">${char.name}</div>
+                <div class="character-role">Character</div>
+                <div class="character-stats">
+                    <div class="character-stat">
+                        <div class="character-stat-value">${char.scenes}</div>
+                        <div class="character-stat-label">Scenes</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function addNewCharacter() {
+            showNotification('To add a character, add them in your script with the Character format!');
+        }
+
+        // Stats View Functions
+        function updateStatsView() {
+            const stats = calculateScriptStats();
+            
+            // Update main stat cards
+            document.getElementById('statTotalPages').textContent = stats.totalPages;
+            document.getElementById('statEstimatedRuntime').textContent = stats.estimatedRuntime;
+            document.getElementById('statTotalScenes').textContent = stats.totalScenes;
+            document.getElementById('statTotalWords').textContent = stats.totalWords;
+            
+            // Update scene breakdown
+            const sceneBreakdown = document.getElementById('sceneBreakdown');
+            if (sceneBreakdown) {
+                let breakdownHTML = '';
+                sceneScripts.forEach((sceneData, index) => {
+                    const wordCount = sceneData.reduce((sum, block) => {
+                        return sum + (block.text ? block.text.split(/\s+/).filter(w => w).length : 0);
+                    }, 0);
+                    breakdownHTML += `
+                        <div class="stat-item">
+                            <span class="stat-item-label">Scene ${index + 1}</span>
+                            <span class="stat-item-value">${wordCount} words</span>
+                        </div>
+                    `;
+                });
+                sceneBreakdown.innerHTML = breakdownHTML || '<p style="color: #94a3b8;">No scenes yet</p>';
+            }
+            
+            // Update character analysis
+            const characterAnalysis = document.getElementById('characterAnalysis');
+            if (characterAnalysis) {
+                extractCharactersFromScript();
+                let analysisHTML = '';
+                characters.slice(0, 5).forEach(char => {
+                    analysisHTML += `
+                        <div class="stat-item">
+                            <span class="stat-item-label">${char.name}</span>
+                            <span class="stat-item-value">${char.scenes} scenes</span>
+                        </div>
+                    `;
+                });
+                characterAnalysis.innerHTML = analysisHTML || '<p style="color: #94a3b8;">No characters yet</p>';
+            }
+        }
+
+        function calculateScriptStats() {
+            let totalWords = 0;
+            let totalBlocks = 0;
+            
+            sceneScripts.forEach(sceneData => {
+                sceneData.forEach(block => {
+                    if (block.text) {
+                        const words = block.text.split(/\s+/).filter(w => w).length;
+                        totalWords += words;
+                        totalBlocks++;
+                    }
+                });
+            });
+            
+            // Standard screenplay formatting: ~250 words per page
+            const totalPages = Math.max(1, Math.ceil(totalWords / 250));
+            // Screenplay timing: ~1 minute per page
+            const estimatedRuntime = totalPages;
+            
+            return {
+                totalWords: totalWords,
+                totalPages: totalPages,
+                estimatedRuntime: estimatedRuntime,
+                totalScenes: sceneScripts.length
+            };
         }
 
         // Options menu functions
@@ -730,9 +1060,213 @@
             menu.classList.toggle('show');
         }
 
-        function openThemeSettings() {
-            showNotification('Theme settings coming soon!');
+        // Search Modal Functions
+        let searchFilter = 'all';
+
+        function openSearchModal() {
+            document.getElementById('searchModal').style.display = 'flex';
             document.getElementById('optionsMenu').classList.remove('show');
+            setTimeout(() => document.getElementById('searchInput').focus(), 100);
+        }
+
+        function closeSearchModal() {
+            document.getElementById('searchModal').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">Enter a search term to find content across your project</p>';
+        }
+
+        function setSearchFilter(filter) {
+            searchFilter = filter;
+            document.querySelectorAll('.search-filters .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            performSearch();
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (!query) {
+                resultsContainer.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">Enter a search term to find content across your project</p>';
+                return;
+            }
+            
+            let results = [];
+            
+            // Search scenes
+            if (searchFilter === 'all' || searchFilter === 'scenes') {
+                sceneScripts.forEach((sceneData, index) => {
+                    sceneData.forEach(block => {
+                        if (block.text && block.text.toLowerCase().includes(query)) {
+                            results.push({
+                                type: 'Scene',
+                                title: `Scene ${index + 1}`,
+                                preview: block.text.substring(0, 100) + '...',
+                                action: () => selectSceneFromBoard(index)
+                            });
+                        }
+                    });
+                });
+            }
+            
+            // Search notes
+            if (searchFilter === 'all' || searchFilter === 'notes') {
+                notes.forEach((note, index) => {
+                    const searchableText = (note.title + ' ' + JSON.stringify(note)).toLowerCase();
+                    if (searchableText.includes(query)) {
+                        results.push({
+                            type: 'Note',
+                            title: note.title,
+                            preview: note.title,
+                            action: () => {
+                                closeSearchModal();
+                                switchMainTab('notes');
+                                selectNote(index);
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Search characters
+            if (searchFilter === 'all' || searchFilter === 'characters') {
+                extractCharactersFromScript();
+                characters.forEach(char => {
+                    if (char.name.toLowerCase().includes(query)) {
+                        results.push({
+                            type: 'Character',
+                            title: char.name,
+                            preview: `Appears in ${char.scenes} scene(s)`,
+                            action: () => {
+                                closeSearchModal();
+                                switchMainTab('characters');
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Display results
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">No results found</p>';
+            } else {
+                resultsContainer.innerHTML = results.map(result => `
+                    <div class="search-result-item" onclick="(${result.action.toString()})()">
+                        <span class="search-result-type">${result.type}</span>
+                        <div class="search-result-title">${result.title}</div>
+                        <div class="search-result-preview">${result.preview}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Import Modal Functions
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
+            document.getElementById('optionsMenu').classList.remove('show');
+            setupImportDropzone();
+        }
+
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+
+        function setupImportDropzone() {
+            const dropzone = document.getElementById('importDropzone');
+            
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+            
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('dragover');
+            });
+            
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    importProjectFromFile(files[0]);
+                }
+            });
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                importProjectFromFile(file);
+            }
+        }
+
+        function importProjectFromFile(file) {
+            if (!file.name.endsWith('.json')) {
+                showNotification('Please select a valid JSON file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const projectData = JSON.parse(e.target.result);
+                    
+                    // Import scenes
+                    if (projectData.scenes) {
+                        sceneScripts = projectData.scenes;
+                        rebuildSceneList();
+                        loadSceneIntoEditor(0);
+                    }
+                    
+                    // Import notes
+                    if (projectData.notes) {
+                        notes = projectData.notes;
+                        updateNotesList();
+                    }
+                    
+                    closeImportModal();
+                    showNotification('Project imported successfully!');
+                    switchMainTab('script');
+                } catch (error) {
+                    showNotification('Error importing project: Invalid file format');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Theme Modal Functions
+        let currentTheme = 'default';
+
+        function openThemeSettings() {
+            document.getElementById('themeModal').style.display = 'flex';
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function closeThemeModal() {
+            document.getElementById('themeModal').style.display = 'none';
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+            event.target.closest('.theme-option').classList.add('active');
+            
+            const body = document.body;
+            body.className = ''; // Remove all theme classes
+            
+            if (theme === 'light') {
+                body.style.background = '#f8fafc';
+            } else if (theme === 'dark') {
+                body.style.background = '#0f172a';
+                // In a full implementation, we'd also update text colors, etc.
+            } else {
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+            
+            showNotification(`Theme changed to ${theme}`);
         }
 
         function openPreferences() {
