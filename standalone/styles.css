@@ -1356,6 +1356,84 @@
             font-weight: 600;
             color: #1e293b;
         }
+        
+        .character-stat-detailed {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .stat-item-details {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        
+        .stat-detail {
+            padding: 2px 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            color: #64748b;
+        }
+        
+        .act-visualization {
+            margin: 16px 0;
+        }
+        
+        .act-bar {
+            display: flex;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .act-segment {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .act-segment:hover {
+            filter: brightness(1.1);
+        }
+        
+        .act-segment span {
+            font-size: 14px;
+        }
+        
+        .act-segment small {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+        
+        .act-1 {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .act-2 {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .act-3 {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .stats-header .btn {
+            margin-left: auto;
+        }
 
         /* Search Modal Styles */
         .search-container {
