@@ -157,7 +157,7 @@
         .header {
             background: linear-gradient(90deg, #4f46e5, #7c3aed);
             color: white;
-            padding: 16px 20px;
+            padding: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -168,12 +168,123 @@
             margin: 0;
             font-size: 24px;
             font-weight: 600;
+            padding: 16px 20px;
         }
 
         .header-actions {
             display: flex;
             gap: 12px;
             align-items: center;
+            padding: 16px 20px;
+        }
+
+        .top-nav {
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 20px;
+        }
+
+        .top-nav-tab {
+            padding: 16px 20px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            position: relative;
+        }
+
+        .top-nav-tab:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .top-nav-tab.active {
+            color: white;
+            border-bottom-color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .options-dropdown {
+            position: relative;
+        }
+
+        .options-cog {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-cog:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
+        }
+
+        .options-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            min-width: 220px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .options-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .options-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            color: #1e293b;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .options-menu-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .options-menu-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .options-menu-item:hover {
+            background: #f1f5f9;
+        }
+
+        .options-menu-item .icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
         }
 
         .user-profile {
@@ -1240,6 +1351,83 @@
             line-height: 1.6;
         }
 
+        .note-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .note-type-badge.character {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .note-type-badge.world {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .note-type-badge.object {
+            background: #fed7aa;
+            color: #c2410c;
+        }
+
+        .note-type-badge.plot {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        .note-type-badge.general {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+
+        .note-fields-container {
+            margin-top: 20px;
+        }
+
+        .note-field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: #4f46e5;
+            color: #4f46e5;
+        }
+
+        .filter-btn.active {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
         .note-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1963,6 +2151,13 @@
     <div class="app-container" id="mainApp" style="display: none;">
         <div class="header">
             <h1>📝 ScriptCraft</h1>
+            <div class="top-nav">
+                <button class="top-nav-tab active" onclick="switchMainTab('script')" id="scriptTab">📜 Script</button>
+                <button class="top-nav-tab" onclick="switchMainTab('notes')" id="notesTab">📋 Notes</button>
+                <button class="top-nav-tab" onclick="switchMainTab('board')" id="boardTab">🎬 Board</button>
+                <button class="top-nav-tab" onclick="switchMainTab('characters')" id="charactersTab">👥 Characters</button>
+                <button class="top-nav-tab" onclick="switchMainTab('stats')" id="statsTab">📊 Stats</button>
+            </div>
             <div class="header-actions">
                 <div class="user-profile">
                     <div class="user-avatar" id="userAvatar">U</div>
@@ -2013,6 +2208,31 @@
                                 <div class="export-title">Web Page</div>
                                 <div class="export-desc">Shareable HTML</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="options-dropdown">
+                    <button class="options-cog" onclick="toggleOptionsMenu()">⚙️</button>
+                    <div class="options-menu" id="optionsMenu">
+                        <div class="options-menu-item" onclick="openThemeSettings()">
+                            <span class="icon">🎨</span>
+                            <span>Theme Settings</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openPreferences()">
+                            <span class="icon">⚡</span>
+                            <span>Preferences</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openAutoSaveSettings()">
+                            <span class="icon">💾</span>
+                            <span>Auto-Save</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openKeyboardShortcuts()">
+                            <span class="icon">⌨️</span>
+                            <span>Keyboard Shortcuts</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openAbout()">
+                            <span class="icon">ℹ️</span>
+                            <span>About</span>
                         </div>
                     </div>
                 </div>
@@ -2133,20 +2353,33 @@
                 <button class="add-scene-btn" id="addCharacterBtn" onclick="addNewCharacter()" style="display: none;">+ Add New Character</button>
 
                 <div class="notes-list" id="notesList" style="display: none;">
-                    <div class="note-item yellow" onclick="selectNote(0)">
-                        <div class="note-title">World Building</div>
-                        <div class="note-preview">The story takes place in modern-day Chicago, focusing on the journalism industry...</div>
-                        <div class="note-date">2 hours ago</div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterNotes('all')">All</button>
+                        <button class="filter-btn" onclick="filterNotes('character')">Character</button>
+                        <button class="filter-btn" onclick="filterNotes('world')">World</button>
+                        <button class="filter-btn" onclick="filterNotes('object')">Object</button>
+                        <button class="filter-btn" onclick="filterNotes('plot')">Plot</button>
+                        <button class="filter-btn" onclick="filterNotes('general')">General</button>
                     </div>
-                    <div class="note-item blue" onclick="selectNote(1)">
-                        <div class="note-title">Character Relationships</div>
-                        <div class="note-preview">Sarah and Marcus have a mentor-student dynamic that evolves throughout...</div>
-                        <div class="note-date">1 day ago</div>
-                    </div>
-                    <div class="note-item green" onclick="selectNote(2)">
-                        <div class="note-title">Plot Points</div>
-                        <div class="note-preview">Key story beats: Inciting incident, first plot point, midpoint...</div>
-                        <div class="note-date">3 days ago</div>
+                    <div id="notesListContainer" style="flex: 1; overflow-y: auto; padding: 16px;">
+                        <div class="note-item yellow" data-type="world" onclick="selectNote(0)">
+                            <span class="note-type-badge world">World</span>
+                            <div class="note-title">World Building</div>
+                            <div class="note-preview">The story takes place in modern-day Chicago, focusing on the journalism industry...</div>
+                            <div class="note-date">2 hours ago</div>
+                        </div>
+                        <div class="note-item blue" data-type="character" onclick="selectNote(1)">
+                            <span class="note-type-badge character">Character</span>
+                            <div class="note-title">Character Relationships</div>
+                            <div class="note-preview">Sarah and Marcus have a mentor-student dynamic that evolves throughout...</div>
+                            <div class="note-date">1 day ago</div>
+                        </div>
+                        <div class="note-item green" data-type="plot" onclick="selectNote(2)">
+                            <span class="note-type-badge plot">Plot</span>
+                            <div class="note-title">Plot Points</div>
+                            <div class="note-preview">Key story beats: Inciting incident, first plot point, midpoint...</div>
+                            <div class="note-date">3 days ago</div>
+                        </div>
                     </div>
                 </div>
 
@@ -2375,38 +2608,121 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Category</label>
-                            <select class="form-input" id="noteCategory" onchange="updateNote()">
-                                <option value="world-building">World Building</option>
-                                <option value="character-notes">Character Notes</option>
-                                <option value="plot-points">Plot Points</option>
-                                <option value="research">Research</option>
-                                <option value="dialogue-ideas">Dialogue Ideas</option>
-                                <option value="themes">Themes</option>
-                                <option value="general">General</option>
+                            <label class="form-label">Note Type</label>
+                            <select class="form-input" id="noteType" onchange="updateNoteType()">
+                                <option value="general">General Note</option>
+                                <option value="character">Character Note</option>
+                                <option value="world" selected>World Note</option>
+                                <option value="object">Object Note</option>
+                                <option value="plot">Plot Note</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Content</label>
-                            <textarea class="form-input note-content-editor" id="noteContent" oninput="updateNote()" placeholder="Write your notes here...">The story takes place in modern-day Chicago, focusing on the journalism industry. The city's diverse neighborhoods and rich cultural landscape provide the perfect backdrop for Sarah's journey of self-discovery.
+                        <!-- General Note Fields (default) -->
+                        <div id="generalFields" class="note-fields-container" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Content</label>
+                                <textarea class="form-input note-content-editor" id="noteContent" oninput="updateNote()" placeholder="Write your notes here..."></textarea>
+                            </div>
+                        </div>
 
-Key locations:
-- The Tribune building (where Marcus works)
-- Lincoln Park (where Sarah goes to think)
-- The small bookstore where Sarah works part-time
-- Sarah's cramped studio apartment in Wicker Park
+                        <!-- Character Note Fields -->
+                        <div id="characterFields" class="note-fields-container" style="display: none;">
+                            <div class="note-field-row">
+                                <div class="form-group">
+                                    <label class="form-label">Character Name</label>
+                                    <input type="text" class="form-input" id="charNoteName" oninput="updateNote()" placeholder="e.g., Sarah Mitchell">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" class="form-input" id="charNoteRole" oninput="updateNote()" placeholder="e.g., Protagonist">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Traits</label>
+                                <input type="text" class="form-input" id="charNoteTraits" oninput="updateNote()" placeholder="e.g., Determined, witty, empathetic">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Goal</label>
+                                <textarea class="form-input" id="charNoteGoal" oninput="updateNote()" placeholder="What does this character want?" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Character Arc</label>
+                                <textarea class="form-input" id="charNoteArc" oninput="updateNote()" placeholder="How does this character change throughout the story?" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Additional Notes</label>
+                                <textarea class="form-input note-content-editor" id="charNoteAdditional" oninput="updateNote()" placeholder="Background, relationships, quirks, etc."></textarea>
+                            </div>
+                        </div>
 
-The journalism world is portrayed as both inspiring and cutthroat, with traditional media struggling against digital disruption. This creates tension and urgency in the characters' professional lives.</textarea>
+                        <!-- World Note Fields -->
+                        <div id="worldFields" class="note-fields-container">
+                            <div class="form-group">
+                                <label class="form-label">Location/Setting Name</label>
+                                <input type="text" class="form-input" id="worldNoteName" oninput="updateNote()" placeholder="e.g., The Tribune Building">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-input" id="worldNoteDescription" oninput="updateNote()" placeholder="Describe this place or world element..." rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">World Rules/Logic</label>
+                                <textarea class="form-input" id="worldNoteRules" oninput="updateNote()" placeholder="How does this world work? Any special rules or logic?" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Brand/Object Replacements</label>
+                                <textarea class="form-input" id="worldNoteReplacements" oninput="updateNote()" placeholder="e.g., 'Nintendo' → 'Funtendo', 'Starbucks' → 'Moonbucks'" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Additional Details</label>
+                                <textarea class="form-input note-content-editor" id="worldNoteAdditional" oninput="updateNote()" placeholder="Culture, atmosphere, significance to the story, etc."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Object Note Fields -->
+                        <div id="objectFields" class="note-fields-container" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Object Name</label>
+                                <input type="text" class="form-input" id="objectNoteName" oninput="updateNote()" placeholder="e.g., Sarah's Notebook">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-input" id="objectNoteDescription" oninput="updateNote()" placeholder="What does this object look like?" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Significance</label>
+                                <textarea class="form-input" id="objectNoteSignificance" oninput="updateNote()" placeholder="Why is this object important to the story or characters?" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Additional Notes</label>
+                                <textarea class="form-input note-content-editor" id="objectNoteAdditional" oninput="updateNote()" placeholder="History, how it's used, emotional value, etc."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Plot Note Fields -->
+                        <div id="plotFields" class="note-fields-container" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Plot Point/Beat</label>
+                                <input type="text" class="form-input" id="plotNoteBeat" oninput="updateNote()" placeholder="e.g., Inciting Incident, Midpoint, Climax">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Summary</label>
+                                <textarea class="form-input" id="plotNoteSummary" oninput="updateNote()" placeholder="Brief summary of this plot point..." rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Detailed Notes</label>
+                                <textarea class="form-input note-content-editor" id="plotNoteDetails" oninput="updateNote()" placeholder="Freeform notes, ideas, scene breakdown, etc."></textarea>
+                            </div>
                         </div>
 
                         <div class="note-stats">
                             <div class="stat-item">
-                                <div class="stat-number" id="noteWordCount">127</div>
+                                <div class="stat-number" id="noteWordCount">0</div>
                                 <div class="stat-label">Words</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number" id="noteCharCount">756</div>
+                                <div class="stat-number" id="noteCharCount">0</div>
                                 <div class="stat-label">Characters</div>
                             </div>
                         </div>
@@ -2453,25 +2769,39 @@ The journalism world is portrayed as both inspiring and cutthroat, with traditio
         let notes = [
             {
                 title: "World Building",
-                category: "world-building",
+                type: "world",
                 color: "yellow",
-                content: "The story takes place in modern-day Chicago, focusing on the journalism industry. The city's diverse neighborhoods and rich cultural landscape provide the perfect backdrop for Sarah's journey of self-discovery.\n\nKey locations:\n- The Tribune building (where Marcus works)\n- Lincoln Park (where Sarah goes to think)\n- The small bookstore where Sarah works part-time\n- Sarah's cramped studio apartment in Wicker Park\n\nThe journalism world is portrayed as both inspiring and cutthroat, with traditional media struggling against digital disruption. This creates tension and urgency in the characters' professional lives.",
+                content: "",
+                worldNoteName: "Chicago Journalism Scene",
+                worldNoteDescription: "Modern-day Chicago with focus on the journalism industry",
+                worldNoteRules: "Traditional media vs digital disruption creates tension",
+                worldNoteReplacements: "",
+                worldNoteAdditional: "The story takes place in modern-day Chicago, focusing on the journalism industry. The city's diverse neighborhoods and rich cultural landscape provide the perfect backdrop for Sarah's journey of self-discovery.\n\nKey locations:\n- The Tribune building (where Marcus works)\n- Lincoln Park (where Sarah goes to think)\n- The small bookstore where Sarah works part-time\n- Sarah's cramped studio apartment in Wicker Park",
                 createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
                 updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
             },
             {
                 title: "Character Relationships",
-                category: "character-notes",
+                type: "character",
                 color: "blue",
-                content: "Sarah and Marcus have a mentor-student dynamic that evolves throughout the story. Initially, Sarah is intimidated by Marcus's experience and reputation, but gradually learns to trust his guidance while maintaining her own voice.\n\nKey relationship dynamics:\n- Sarah & Marcus: Mentor/student evolving to mutual respect\n- Sarah & Elena: Professional rivalry with underlying similarities\n- Marcus & Elena: Generational clash in journalism approaches\n\nThe relationships drive character growth and create natural conflict points in the narrative.",
+                content: "",
+                charNoteName: "Sarah Mitchell",
+                charNoteRole: "Protagonist",
+                charNoteTraits: "Determined, witty, empathetic, self-doubting",
+                charNoteGoal: "To write a story that matters and find her authentic voice",
+                charNoteArc: "Transforms from insecure and reactive to confident and authentic",
+                charNoteAdditional: "Sarah and Marcus have a mentor-student dynamic that evolves throughout the story. Initially, Sarah is intimidated by Marcus's experience and reputation, but gradually learns to trust his guidance while maintaining her own voice.\n\nKey relationship dynamics:\n- Sarah & Marcus: Mentor/student evolving to mutual respect\n- Sarah & Elena: Professional rivalry with underlying similarities\n- Marcus & Elena: Generational clash in journalism approaches",
                 createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
                 updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
             },
             {
                 title: "Plot Points",
-                category: "plot-points",
+                type: "plot",
                 color: "green",
-                content: "Key story beats that drive the narrative forward:\n\n1. Inciting Incident: Sarah discovers a potential corruption story\n2. First Plot Point: Marcus agrees to mentor her investigation\n3. Midpoint: Sarah uncovers deeper connections, Elena becomes involved\n4. Crisis: Sarah must choose between safe story and dangerous truth\n5. Climax: Confrontation with corrupt officials\n6. Resolution: Sarah finds her authentic voice as a journalist\n\nEach beat should raise stakes and deepen character development.",
+                content: "",
+                plotNoteBeat: "Three-Act Structure",
+                plotNoteSummary: "Classic three-act structure with key turning points",
+                plotNoteDetails: "Key story beats that drive the narrative forward:\n\n1. Inciting Incident: Sarah discovers a potential corruption story\n2. First Plot Point: Marcus agrees to mentor her investigation\n3. Midpoint: Sarah uncovers deeper connections, Elena becomes involved\n4. Crisis: Sarah must choose between safe story and dangerous truth\n5. Climax: Confrontation with corrupt officials\n6. Resolution: Sarah finds her authentic voice as a journalist\n\nEach beat should raise stakes and deepen character development.",
                 createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
                 updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
             }
@@ -3129,4 +3459,325 @@ The journalism world is portrayed as both inspiring and cutthroat, with traditio
                             const input = document.getElementById('sceneImageInput');
                             const dt = new DataTransfer();
                             dt.items.add(file);
-                            input.files<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98d33b46c72399e6',t:'MTc2MDIzNjgxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+                            input.files = dt.items;
+                            handleSceneImageUpload({target: input});
+                        }
+                    }
+                });
+            }
+
+            // Initialize notes on load
+            if (notes.length > 0) {
+                loadNoteDetails(0);
+            }
+        });
+
+        // Top Navigation Functions
+        function switchMainTab(tab) {
+            // Update top nav tabs
+            document.querySelectorAll('.top-nav-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+
+            // Hide all sections
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('editor').style.display = 'none';
+            document.getElementById('formatSelect').style.display = 'none';
+
+            // Show appropriate section based on tab
+            if (tab === 'script') {
+                document.getElementById('sidebar').style.display = 'flex';
+                document.getElementById('editor').style.display = 'block';
+                document.getElementById('formatSelect').style.display = 'block';
+                switchTab('scenes');
+            } else if (tab === 'notes') {
+                document.getElementById('sidebar').style.display = 'flex';
+                switchTab('notes');
+            } else if (tab === 'board') {
+                document.getElementById('sidebar').style.display = 'flex';
+                switchTab('board');
+            } else if (tab === 'characters') {
+                document.getElementById('sidebar').style.display = 'flex';
+                switchTab('characters');
+            } else if (tab === 'stats') {
+                document.getElementById('sidebar').style.display = 'flex';
+                switchTab('stats');
+            }
+        }
+
+        // Options Menu Functions
+        function toggleOptionsMenu() {
+            const menu = document.getElementById('optionsMenu');
+            menu.classList.toggle('show');
+            
+            // Close menu when clicking outside
+            if (menu.classList.contains('show')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeOptionsOnClickOutside);
+                }, 0);
+            }
+        }
+
+        function closeOptionsOnClickOutside(e) {
+            const menu = document.getElementById('optionsMenu');
+            const cog = document.querySelector('.options-cog');
+            if (!menu.contains(e.target) && !cog.contains(e.target)) {
+                menu.classList.remove('show');
+                document.removeEventListener('click', closeOptionsOnClickOutside);
+            }
+        }
+
+        function openThemeSettings() {
+            alert('Theme settings coming soon!');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function openPreferences() {
+            alert('Preferences coming soon!');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function openAutoSaveSettings() {
+            alert('Auto-save settings coming soon!');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function openKeyboardShortcuts() {
+            alert('Keyboard shortcuts reference coming soon!');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function openAbout() {
+            alert('ScriptCraft v1.0\nA professional screenwriting application for writers.');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        // Note Functions
+        function selectNote(index) {
+            const items = document.querySelectorAll('.note-item');
+            items.forEach(item => item.classList.remove('active'));
+            if (items[index]) {
+                items[index].classList.add('active');
+            }
+            currentNote = index;
+            loadNoteDetails(index);
+        }
+
+        function loadNoteDetails(index) {
+            const note = notes[index];
+            if (!note) return;
+
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteType').value = note.type || 'general';
+
+            // Update color picker
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelector(`.color-option.${note.color}`).classList.add('active');
+
+            // Show appropriate fields based on type
+            updateNoteType();
+
+            // Load type-specific fields
+            if (note.type === 'character') {
+                document.getElementById('charNoteName').value = note.charNoteName || '';
+                document.getElementById('charNoteRole').value = note.charNoteRole || '';
+                document.getElementById('charNoteTraits').value = note.charNoteTraits || '';
+                document.getElementById('charNoteGoal').value = note.charNoteGoal || '';
+                document.getElementById('charNoteArc').value = note.charNoteArc || '';
+                document.getElementById('charNoteAdditional').value = note.charNoteAdditional || '';
+            } else if (note.type === 'world') {
+                document.getElementById('worldNoteName').value = note.worldNoteName || '';
+                document.getElementById('worldNoteDescription').value = note.worldNoteDescription || '';
+                document.getElementById('worldNoteRules').value = note.worldNoteRules || '';
+                document.getElementById('worldNoteReplacements').value = note.worldNoteReplacements || '';
+                document.getElementById('worldNoteAdditional').value = note.worldNoteAdditional || '';
+            } else if (note.type === 'object') {
+                document.getElementById('objectNoteName').value = note.objectNoteName || '';
+                document.getElementById('objectNoteDescription').value = note.objectNoteDescription || '';
+                document.getElementById('objectNoteSignificance').value = note.objectNoteSignificance || '';
+                document.getElementById('objectNoteAdditional').value = note.objectNoteAdditional || '';
+            } else if (note.type === 'plot') {
+                document.getElementById('plotNoteBeat').value = note.plotNoteBeat || '';
+                document.getElementById('plotNoteSummary').value = note.plotNoteSummary || '';
+                document.getElementById('plotNoteDetails').value = note.plotNoteDetails || '';
+            } else {
+                document.getElementById('noteContent').value = note.content || '';
+            }
+
+            updateNoteStats();
+        }
+
+        function updateNoteType() {
+            const noteType = document.getElementById('noteType').value;
+
+            // Hide all field containers
+            document.getElementById('generalFields').style.display = 'none';
+            document.getElementById('characterFields').style.display = 'none';
+            document.getElementById('worldFields').style.display = 'none';
+            document.getElementById('objectFields').style.display = 'none';
+            document.getElementById('plotFields').style.display = 'none';
+
+            // Show the appropriate fields
+            document.getElementById(noteType + 'Fields').style.display = 'block';
+
+            // Update note type in data
+            if (notes[currentNote]) {
+                notes[currentNote].type = noteType;
+            }
+        }
+
+        function updateNote() {
+            const note = notes[currentNote];
+            if (!note) return;
+
+            note.title = document.getElementById('noteTitle').value;
+            note.updatedAt = new Date().toISOString();
+
+            // Update type-specific fields
+            if (note.type === 'character') {
+                note.charNoteName = document.getElementById('charNoteName').value;
+                note.charNoteRole = document.getElementById('charNoteRole').value;
+                note.charNoteTraits = document.getElementById('charNoteTraits').value;
+                note.charNoteGoal = document.getElementById('charNoteGoal').value;
+                note.charNoteArc = document.getElementById('charNoteArc').value;
+                note.charNoteAdditional = document.getElementById('charNoteAdditional').value;
+            } else if (note.type === 'world') {
+                note.worldNoteName = document.getElementById('worldNoteName').value;
+                note.worldNoteDescription = document.getElementById('worldNoteDescription').value;
+                note.worldNoteRules = document.getElementById('worldNoteRules').value;
+                note.worldNoteReplacements = document.getElementById('worldNoteReplacements').value;
+                note.worldNoteAdditional = document.getElementById('worldNoteAdditional').value;
+            } else if (note.type === 'object') {
+                note.objectNoteName = document.getElementById('objectNoteName').value;
+                note.objectNoteDescription = document.getElementById('objectNoteDescription').value;
+                note.objectNoteSignificance = document.getElementById('objectNoteSignificance').value;
+                note.objectNoteAdditional = document.getElementById('objectNoteAdditional').value;
+            } else if (note.type === 'plot') {
+                note.plotNoteBeat = document.getElementById('plotNoteBeat').value;
+                note.plotNoteSummary = document.getElementById('plotNoteSummary').value;
+                note.plotNoteDetails = document.getElementById('plotNoteDetails').value;
+            } else {
+                note.content = document.getElementById('noteContent').value;
+            }
+
+            updateNoteStats();
+            updateNotesList();
+        }
+
+        function updateNoteStats() {
+            let allText = '';
+            const note = notes[currentNote];
+            if (!note) return;
+
+            // Collect all text from visible fields
+            const container = document.querySelector('.note-fields-container:not([style*="display: none"])');
+            if (container) {
+                const inputs = container.querySelectorAll('input[type="text"], textarea');
+                inputs.forEach(input => {
+                    allText += input.value + ' ';
+                });
+            }
+
+            const words = allText.trim().split(/\s+/).filter(w => w.length > 0).length;
+            const chars = allText.length;
+
+            document.getElementById('noteWordCount').textContent = words;
+            document.getElementById('noteCharCount').textContent = chars;
+        }
+
+        function changeNoteColor(color) {
+            const note = notes[currentNote];
+            if (!note) return;
+
+            note.color = color;
+
+            // Update color picker
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelector(`.color-option.${color}`).classList.add('active');
+
+            updateNotesList();
+        }
+
+        function filterNotes(type) {
+            // Update filter button states
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter notes
+            const noteItems = document.querySelectorAll('.note-item');
+            noteItems.forEach(item => {
+                if (type === 'all' || item.getAttribute('data-type') === type) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function updateNotesList() {
+            const container = document.getElementById('notesListContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+            notes.forEach((note, index) => {
+                const preview = getNotePreview(note);
+                const date = getRelativeTime(note.updatedAt);
+                
+                const noteItem = document.createElement('div');
+                noteItem.className = `note-item ${note.color} ${index === currentNote ? 'active' : ''}`;
+                noteItem.setAttribute('data-type', note.type);
+                noteItem.onclick = () => selectNote(index);
+                noteItem.innerHTML = `
+                    <span class="note-type-badge ${note.type}">${note.type}</span>
+                    <div class="note-title">${note.title}</div>
+                    <div class="note-preview">${preview}</div>
+                    <div class="note-date">${date}</div>
+                `;
+                container.appendChild(noteItem);
+            });
+        }
+
+        function getNotePreview(note) {
+            let preview = '';
+            if (note.type === 'character') {
+                preview = note.charNoteAdditional || note.charNoteGoal || '';
+            } else if (note.type === 'world') {
+                preview = note.worldNoteDescription || note.worldNoteAdditional || '';
+            } else if (note.type === 'object') {
+                preview = note.objectNoteDescription || note.objectNoteSignificance || '';
+            } else if (note.type === 'plot') {
+                preview = note.plotNoteSummary || note.plotNoteDetails || '';
+            } else {
+                preview = note.content || '';
+            }
+            return preview.substring(0, 100) + (preview.length > 100 ? '...' : '');
+        }
+
+        function getRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+            if (hours < 1) return 'Just now';
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            if (days === 1) return '1 day ago';
+            return `${days} days ago`;
+        }
+
+        function addNewNote() {
+            const newNote = {
+                title: "New Note",
+                type: "general",
+                color: "yellow",
+                content: "",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            notes.push(newNote);
+            updateNotesList();
+            selectNote(notes.length - 1);
+        }
+    </script>
+</body>
+</html>
