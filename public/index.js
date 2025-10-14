@@ -17,6 +17,47 @@
         let editorEnabled = true; // Always enabled
         let currentSceneIndex = 0; // Track current scene
         let sceneScripts = []; // Array of scripts, one per scene
+        
+        // Notes system variables
+        let currentNote = 0;
+        let currentFilter = 'all';
+        let notes = [
+            {
+                title: "World Building",
+                type: "world",
+                color: "yellow",
+                worldNoteName: "Modern-day Chicago",
+                worldNoteDescription: "The story takes place in modern-day Chicago, focusing on the journalism industry.",
+                worldNoteRules: "Realistic contemporary setting with emphasis on authentic journalism culture.",
+                worldNoteReplacements: "'The Tribune' → 'The Herald', 'Starbucks' → 'JavaPoint'",
+                worldNoteAdditional: "The city's diverse neighborhoods and rich cultural landscape provide the perfect backdrop for Sarah's journey of self-discovery.\n\nKey locations:\n- The Tribune building (where Marcus works)\n- Lincoln Park (where Sarah goes to think)\n- The small bookstore where Sarah works part-time\n- Sarah's cramped studio apartment in Wicker Park",
+                createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                title: "Character: Sarah Mitchell",
+                type: "character",
+                color: "blue",
+                charNoteName: "Sarah Mitchell",
+                charNoteRole: "Protagonist",
+                charNoteTraits: "Determined, witty, empathetic, self-doubting",
+                charNoteGoal: "To write a story that matters and find her authentic voice",
+                charNoteArc: "From self-doubting writer to confident storyteller who learns to trust her instincts",
+                charNoteAdditional: "Sarah is a 28-year-old aspiring journalist working at a small bookstore while chasing her dream. She has a mentor-student relationship with Marcus that evolves throughout the story. Her biggest fear is mediocrity and being forgotten.",
+                createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                title: "Plot Structure",
+                type: "plot",
+                color: "green",
+                plotNoteBeat: "Three-Act Structure",
+                plotNoteSummary: "Classic three-act structure with strong character development arc",
+                plotNoteDetails: "Act 1: Setup - Sarah's mundane life and desire for more\nAct 2: Confrontation - She pursues a big story and faces obstacles\nAct 3: Resolution - Sarah finds her voice and completes her story\n\nKey beats:\n- Inciting Incident: Sarah discovers a lead on an important story\n- First Plot Point: Decides to pursue it despite risks\n- Midpoint: Major revelation changes everything\n- Dark Night: Almost gives up\n- Climax: Completes and publishes the story",
+                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+            }
+        ];
 
         function enableTestEditor() {
             // No longer needed - editor is always enabled
@@ -654,4 +695,258 @@
             
             // Rebuild scene list to add delete buttons
             rebuildSceneList();
+            
+            // Initialize notes view
+            updateNotesList();
+            if (notes.length > 0) {
+                loadNoteDetails(0);
+            }
         });
+
+        // Main tab switching
+        function switchMainTab(tab) {
+            // Update top nav tabs
+            document.querySelectorAll('.top-nav-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+
+            // Hide all view containers
+            document.getElementById('scriptView').style.display = 'none';
+            document.getElementById('notesView').style.display = 'none';
+
+            // Show appropriate view
+            if (tab === 'script') {
+                document.getElementById('scriptView').style.display = 'flex';
+            } else if (tab === 'notes') {
+                document.getElementById('notesView').style.display = 'flex';
+                updateNotesList();
+            } else if (tab === 'board' || tab === 'characters' || tab === 'stats') {
+                showNotification(`${tab.charAt(0).toUpperCase() + tab.slice(1)} view coming soon!`);
+            }
+        }
+
+        // Options menu functions
+        function toggleOptionsMenu() {
+            const menu = document.getElementById('optionsMenu');
+            menu.classList.toggle('show');
+        }
+
+        function openThemeSettings() {
+            showNotification('Theme settings coming soon!');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function openPreferences() {
+            showNotification('Preferences coming soon!');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function openAbout() {
+            showNotification('Script Scribbler v1.0 - A professional screenwriting application for writers.');
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        // Close options menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const optionsMenu = document.getElementById('optionsMenu');
+            const optionsCog = document.querySelector('.options-cog');
+            if (optionsMenu && !optionsMenu.contains(e.target) && e.target !== optionsCog) {
+                optionsMenu.classList.remove('show');
+            }
+        });
+
+        // Notes system functions
+        function filterNotes(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            updateNotesList();
+        }
+
+        function updateNotesList() {
+            const container = document.getElementById('notesListContainer');
+            container.innerHTML = '';
+            
+            const filteredNotes = currentFilter === 'all' 
+                ? notes 
+                : notes.filter(note => note.type === currentFilter);
+            
+            filteredNotes.forEach((note, index) => {
+                // Find the actual index in the full notes array
+                const actualIndex = notes.indexOf(note);
+                const preview = getNotePreview(note);
+                const date = getRelativeTime(note.updatedAt);
+                
+                const noteItem = document.createElement('div');
+                noteItem.className = `note-item ${note.color} ${actualIndex === currentNote ? 'active' : ''}`;
+                noteItem.setAttribute('data-type', note.type);
+                noteItem.onclick = () => selectNote(actualIndex);
+                noteItem.innerHTML = `
+                    <span class="note-type-badge ${note.type}">${note.type}</span>
+                    <div class="note-title">${note.title}</div>
+                    <div class="note-preview">${preview}</div>
+                    <div class="note-date">${date}</div>
+                `;
+                container.appendChild(noteItem);
+            });
+        }
+
+        function getNotePreview(note) {
+            let preview = '';
+            if (note.type === 'character') {
+                preview = note.charNoteAdditional || note.charNoteGoal || '';
+            } else if (note.type === 'world') {
+                preview = note.worldNoteDescription || note.worldNoteAdditional || '';
+            } else if (note.type === 'object') {
+                preview = note.objectNoteDescription || note.objectNoteSignificance || '';
+            } else if (note.type === 'plot') {
+                preview = note.plotNoteSummary || note.plotNoteDetails || '';
+            } else {
+                preview = note.content || '';
+            }
+            return preview.substring(0, 100) + (preview.length > 100 ? '...' : '');
+        }
+
+        function getRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            if (diffDays === 1) return '1 day ago';
+            return `${diffDays} days ago`;
+        }
+
+        function selectNote(index) {
+            const items = document.querySelectorAll('.note-item');
+            items.forEach(item => item.classList.remove('active'));
+            currentNote = index;
+            updateNotesList(); // Refresh to update active state
+            loadNoteDetails(index);
+        }
+
+        function loadNoteDetails(index) {
+            const note = notes[index];
+            if (!note) return;
+
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteType').value = note.type || 'general';
+
+            // Update color picker
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelector(`.color-option.${note.color}`).classList.add('active');
+
+            // Show appropriate fields based on type
+            updateNoteType();
+
+            // Load type-specific fields
+            if (note.type === 'character') {
+                document.getElementById('charNoteName').value = note.charNoteName || '';
+                document.getElementById('charNoteRole').value = note.charNoteRole || '';
+                document.getElementById('charNoteTraits').value = note.charNoteTraits || '';
+                document.getElementById('charNoteGoal').value = note.charNoteGoal || '';
+                document.getElementById('charNoteArc').value = note.charNoteArc || '';
+                document.getElementById('charNoteAdditional').value = note.charNoteAdditional || '';
+            } else if (note.type === 'world') {
+                document.getElementById('worldNoteName').value = note.worldNoteName || '';
+                document.getElementById('worldNoteDescription').value = note.worldNoteDescription || '';
+                document.getElementById('worldNoteRules').value = note.worldNoteRules || '';
+                document.getElementById('worldNoteReplacements').value = note.worldNoteReplacements || '';
+                document.getElementById('worldNoteAdditional').value = note.worldNoteAdditional || '';
+            } else if (note.type === 'object') {
+                document.getElementById('objectNoteName').value = note.objectNoteName || '';
+                document.getElementById('objectNoteDescription').value = note.objectNoteDescription || '';
+                document.getElementById('objectNoteSignificance').value = note.objectNoteSignificance || '';
+                document.getElementById('objectNoteAdditional').value = note.objectNoteAdditional || '';
+            } else if (note.type === 'plot') {
+                document.getElementById('plotNoteBeat').value = note.plotNoteBeat || '';
+                document.getElementById('plotNoteSummary').value = note.plotNoteSummary || '';
+                document.getElementById('plotNoteDetails').value = note.plotNoteDetails || '';
+            } else {
+                document.getElementById('noteContent').value = note.content || '';
+            }
+        }
+
+        function updateNoteType() {
+            const noteType = document.getElementById('noteType').value;
+            
+            // Hide all field containers
+            document.querySelectorAll('.note-fields-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            
+            // Show the appropriate one
+            document.getElementById(noteType + 'Fields').style.display = 'block';
+            
+            // Update current note type
+            if (notes[currentNote]) {
+                notes[currentNote].type = noteType;
+            }
+        }
+
+        function updateNote() {
+            const note = notes[currentNote];
+            if (!note) return;
+
+            note.title = document.getElementById('noteTitle').value;
+            note.updatedAt = new Date().toISOString();
+
+            // Update type-specific fields
+            const noteType = note.type;
+            if (noteType === 'character') {
+                note.charNoteName = document.getElementById('charNoteName').value;
+                note.charNoteRole = document.getElementById('charNoteRole').value;
+                note.charNoteTraits = document.getElementById('charNoteTraits').value;
+                note.charNoteGoal = document.getElementById('charNoteGoal').value;
+                note.charNoteArc = document.getElementById('charNoteArc').value;
+                note.charNoteAdditional = document.getElementById('charNoteAdditional').value;
+            } else if (noteType === 'world') {
+                note.worldNoteName = document.getElementById('worldNoteName').value;
+                note.worldNoteDescription = document.getElementById('worldNoteDescription').value;
+                note.worldNoteRules = document.getElementById('worldNoteRules').value;
+                note.worldNoteReplacements = document.getElementById('worldNoteReplacements').value;
+                note.worldNoteAdditional = document.getElementById('worldNoteAdditional').value;
+            } else if (noteType === 'object') {
+                note.objectNoteName = document.getElementById('objectNoteName').value;
+                note.objectNoteDescription = document.getElementById('objectNoteDescription').value;
+                note.objectNoteSignificance = document.getElementById('objectNoteSignificance').value;
+                note.objectNoteAdditional = document.getElementById('objectNoteAdditional').value;
+            } else if (noteType === 'plot') {
+                note.plotNoteBeat = document.getElementById('plotNoteBeat').value;
+                note.plotNoteSummary = document.getElementById('plotNoteSummary').value;
+                note.plotNoteDetails = document.getElementById('plotNoteDetails').value;
+            } else {
+                note.content = document.getElementById('noteContent').value;
+            }
+
+            updateNotesList();
+        }
+
+        function changeNoteColor(color) {
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelector(`.color-option.${color}`).classList.add('active');
+            
+            if (notes[currentNote]) {
+                notes[currentNote].color = color;
+                updateNotesList();
+            }
+        }
+
+        function addNewNote() {
+            const newNote = {
+                title: "New Note",
+                type: "general",
+                color: "yellow",
+                content: "",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            notes.push(newNote);
+            currentNote = notes.length - 1;
+            updateNotesList();
+            loadNoteDetails(currentNote);
+            showNotification('New note created!');
+        }
