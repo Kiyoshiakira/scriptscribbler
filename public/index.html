@@ -164,6 +164,59 @@
         </div>
     </div>
 
+    <!-- Preferences Modal -->
+    <div class="export-modal" id="preferencesModal" style="display: none;">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">⚡ Preferences</h2>
+                <button class="close-modal-btn" onclick="closePreferences()">✕</button>
+            </div>
+
+            <div class="preferences-container">
+                <div class="setting-group">
+                    <label class="setting-label">Editor Font Size</label>
+                    <select class="setting-input" id="prefFontSize" onchange="updatePreference('fontSize', this.value)">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                        <option value="extra-large">Extra Large</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Preferred Export Format</label>
+                    <select class="setting-input" id="prefExportFormat" onchange="updatePreference('preferredExportFormat', this.value)">
+                        <option value="json" selected>JSON</option>
+                        <option value="xml">XML</option>
+                        <option value="fountain">Fountain</option>
+                        <option value="pdf">PDF</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <input type="checkbox" id="prefAutoSave" onchange="updatePreference('autoSave', this.checked)" checked>
+                        Enable Auto-Save (every 30 seconds)
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Theme</label>
+                    <select class="setting-input" id="prefTheme" onchange="updatePreference('theme', this.value); setTheme(this.value)">
+                        <option value="default" selected>Default (Purple)</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+
+                <div class="preferences-footer">
+                    <button class="btn btn-secondary" onclick="resetPreferences()">Reset to Defaults</button>
+                    <button class="btn btn-primary" onclick="closePreferences()">Save & Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Top Navigation Bar -->
         <div class="header">
@@ -317,6 +370,17 @@
                                     <option value="object">Object Note</option>
                                     <option value="plot">Plot Note</option>
                                 </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Linked Scene (Optional)</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <select class="form-input" id="noteLinkedScene" onchange="updateNote()" style="flex: 1;">
+                                        <option value="">None</option>
+                                    </select>
+                                    <button class="btn btn-secondary" onclick="jumpToLinkedScene()" style="padding: 8px 16px;">🔗 Jump</button>
+                                </div>
+                                <small style="color: #64748b; font-size: 11px;">Link this note to a specific scene for quick navigation</small>
                             </div>
 
                             <!-- General Note Fields -->
