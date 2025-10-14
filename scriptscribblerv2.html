@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScriptCraft - Collaborative Script Editor</title>
+    <title>Script Scribbler - Collaborative Script Editor</title>
     <style>
         body {
             box-sizing: border-box;
@@ -223,69 +223,49 @@
             color: #64748b;
         }
 
-        .editor {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            background: #fefefe;
-            min-height: 500px;
-        }
-
-        .script-line {
+        /* New ContentEditable Editor Styles */
+        .script-editor-block {
+            outline: none;
+            min-height: 1.5em;
             margin-bottom: 12px;
-            min-height: 20px;
-            position: relative;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border-radius: 3px;
+            padding: 2px 6px;
+            transition: background 0.1s;
         }
-
-        .script-line.scene-heading {
+        .script-editor-block.scene-heading {
             font-weight: bold;
             text-transform: uppercase;
             margin-top: 24px;
             margin-bottom: 16px;
+            background: #f1f5f9;
         }
-
-        .script-line.action {
+        .script-editor-block.action {
             margin-left: 0;
             margin-right: 0;
         }
-
-        .script-line.character {
+        .script-editor-block.character {
             margin-left: 220px;
             font-weight: bold;
             margin-bottom: 4px;
         }
-
-        .script-line.dialogue {
+        .script-editor-block.dialogue {
             margin-left: 100px;
             margin-right: 100px;
         }
-
-        .script-line.parenthetical {
+        .script-editor-block.parenthetical {
             margin-left: 160px;
             margin-right: 120px;
             font-style: italic;
         }
-
-        .script-input {
-            width: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            line-height: inherit;
-            resize: none;
-            overflow: hidden;
-            padding: 2px 0;
+        .script-editor-block.placeholder:empty:before {
+            content: attr(data-placeholder);
+            color: #adb5bd;
+            pointer-events: none;
         }
-
-        .script-input:focus {
-            background: rgba(79, 70, 229, 0.05);
-            border-radius: 4px;
-            padding: 2px 4px;
+        .script-editor-block:focus {
+            background: #e0e7ff;
         }
 
         .export-modal {
@@ -472,6 +452,23 @@
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
+        .test-editor-btn {
+            display: block;
+            margin: 0 auto 24px auto;
+            padding: 14px 28px;
+            background: linear-gradient(90deg, #059669, #10b981);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .test-editor-btn:hover {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -482,16 +479,16 @@
                 order: 2;
             }
 
-            .script-line.character {
+            .script-editor-block.character {
                 margin-left: 120px;
             }
 
-            .script-line.dialogue {
+            .script-editor-block.dialogue {
                 margin-left: 60px;
                 margin-right: 60px;
             }
 
-            .script-line.parenthetical {
+            .script-editor-block.parenthetical {
                 margin-left: 80px;
                 margin-right: 80px;
             }
@@ -574,8 +571,9 @@
     </div>
 
     <div class="container">
+        <button class="test-editor-btn" onclick="enableTestEditor()">🚀 Test Script Editor (No Login)</button>
         <div class="header">
-            <div class="logo">🎬 ScriptCraft</div>
+            <div class="logo">🎬 Script Scribbler</div>
             <div class="integration-info">
                 <span class="integration-badge">Integration Ready</span>
                 <button class="export-btn" onclick="openExportModal()">🚀 Export & Integrate</button>
@@ -623,7 +621,7 @@
 
             <div class="editor-container">
                 <div class="editor-toolbar">
-                    <select class="format-select" id="formatSelect" onchange="changeFormat()">
+                    <select class="format-select" id="formatSelect" onchange="changeBlockTypeDropdown()" disabled>
                         <option value="action">Action</option>
                         <option value="scene-heading">Scene Heading</option>
                         <option value="character">Character</option>
@@ -637,153 +635,305 @@
                     </div>
                 </div>
 
-                <div class="editor" id="editor">
-                    <div class="script-line scene-heading">
-                        <textarea class="script-input" placeholder="INT. COFFEE SHOP - DAY" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">INT. COFFEE SHOP - DAY</textarea>
-                    </div>
-                    <div class="script-line action">
-                        <textarea class="script-input" placeholder="Describe the action..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">SARAH, a young writer in her twenties, sits at a corner table typing furiously on her laptop. Steam rises from her untouched coffee.</textarea>
-                    </div>
-                    <div class="script-line character">
-                        <textarea class="script-input" placeholder="CHARACTER NAME" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">SARAH</textarea>
-                    </div>
-                    <div class="script-line dialogue">
-                        <textarea class="script-input" placeholder="Character dialogue..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">This story isn't working. I need something more... authentic.</textarea>
-                    </div>
-                    <div class="script-line action">
-                        <textarea class="script-input" placeholder="Describe the action..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">She stares at the screen, frustrated. The cursor blinks mockingly at the end of an incomplete sentence.</textarea>
-                    </div>
-                    <div class="script-line scene-heading">
-                        <textarea class="script-input" placeholder="EXT. PARK - AFTERNOON" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">EXT. PARK - AFTERNOON</textarea>
-                    </div>
-                    <div class="script-line action">
-                        <textarea class="script-input" placeholder="Describe the action..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">Sarah walks through the park, phone pressed to her ear. She looks determined but nervous.</textarea>
-                    </div>
-                    <div class="script-line character">
-                        <textarea class="script-input" placeholder="CHARACTER NAME" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">SARAH</textarea>
-                    </div>
-                    <div class="script-line dialogue">
-                        <textarea class="script-input" placeholder="Character dialogue..." onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()">Marcus, I know this sounds crazy, but I think I found our story.</textarea>
-                    </div>
-                </div>
+                <!-- Scrite-Style Editor -->
+                <div class="editor" id="scriptEditor" contenteditable="false" spellcheck="false"></div>
             </div>
         </div>
     </div>
 
     <script>
-        let currentScene = 0;
-        let selectedExportType = null;
-        
-        let scenes = [
-            { title: "Scene 1", location: "INT. COFFEE SHOP - DAY" },
-            { title: "Scene 2", location: "EXT. PARK - AFTERNOON" }
+        // --- SCRITE-LIKE SCRIPT EDITOR LOGIC ---
+        const SCRIPT_BLOCK_TYPES = [
+            'action',
+            'scene-heading',
+            'character',
+            'dialogue',
+            'parenthetical'
         ];
+        const PLACEHOLDERS = {
+            'scene-heading': 'INT./EXT. LOCATION - TIME',
+            'action': 'Describe the action...',
+            'character': 'CHARACTER NAME',
+            'dialogue': 'Character dialogue...',
+            'parenthetical': '(direction)'
+        };
 
-        // Auto-resize textarea function
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
-        }
+        let editorEnabled = false; // Only enable after test button or login
 
-        // Handle keyboard navigation
-        function handleKeyDown(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const currentLine = event.target.closest('.script-line');
-                const newLine = createNewLine('action');
-                currentLine.parentNode.insertBefore(newLine, currentLine.nextSibling);
-                newLine.querySelector('.script-input').focus();
-            } else if (event.key === 'Tab') {
-                event.preventDefault();
-                cycleFormat(event.target.closest('.script-line'));
+        function enableTestEditor() {
+            editorEnabled = true;
+            const editor = document.getElementById('scriptEditor');
+            editor.setAttribute('contenteditable', 'true');
+            document.getElementById('formatSelect').disabled = false;
+            if (editor.innerHTML.trim() === "") {
+                initScriptEditor();
             }
+            setTimeout(() => {
+                editor.querySelector('.script-editor-block')?.focus();
+            }, 50);
         }
 
-        // Create new script line
-        function createNewLine(format) {
-            const line = document.createElement('div');
-            line.className = `script-line ${format}`;
-            line.innerHTML = `<textarea class="script-input" placeholder="${getPlaceholder(format)}" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateStats()"></textarea>`;
-            return line;
+        function createScriptEditorBlock(type = 'action', text = '') {
+            const div = document.createElement('div');
+            div.className = `script-editor-block ${type}`;
+            div.setAttribute('data-type', type);
+            div.setAttribute('tabindex', '0');
+            div.setAttribute('data-placeholder', PLACEHOLDERS[type] || '');
+            if (!text) div.classList.add('placeholder');
+            div.innerText = text || '';
+            // Event handlers
+            div.addEventListener('keydown', handleScriptEditorKeyDown);
+            div.addEventListener('focus', function() {
+                setFormatDropdownToBlock(this);
+            });
+            div.addEventListener('input', function() {
+                if (div.textContent.trim() === '') {
+                    div.classList.add('placeholder');
+                } else {
+                    div.classList.remove('placeholder');
+                }
+                autoFormatScriptBlock(this);
+                updateStats();
+            });
+            div.addEventListener('click', function() {
+                setFormatDropdownToBlock(this);
+            });
+            return div;
         }
 
-        // Get placeholder text for format
-        function getPlaceholder(format) {
-            const placeholders = {
-                'scene-heading': 'INT./EXT. LOCATION - TIME',
-                'action': 'Describe the action...',
-                'character': 'CHARACTER NAME',
-                'dialogue': 'Character dialogue...',
-                'parenthetical': '(direction)'
-            };
-            return placeholders[format] || 'Enter text...';
+        function initScriptEditor() {
+            const editor = document.getElementById('scriptEditor');
+            if (!editor) return;
+            editor.innerHTML = '';
+            // Example initial lines
+            const initialBlocks = [
+                {type: 'scene-heading', text: 'INT. COFFEE SHOP - DAY'},
+                {type: 'action', text: 'SARAH, a young writer in her twenties, sits at a corner table typing furiously on her laptop. Steam rises from her untouched coffee.'},
+                {type: 'character', text: 'SARAH'},
+                {type: 'dialogue', text: "This story isn't working. I need something more... authentic."},
+                {type: 'action', text: "She stares at the screen, frustrated. The cursor blinks mockingly at the end of an incomplete sentence."},
+                {type: 'scene-heading', text: "EXT. PARK - AFTERNOON"},
+                {type: 'action', text: "Sarah walks through the park, phone pressed to her ear. She looks determined but nervous."},
+                {type: 'character', text: "SARAH"},
+                {type: 'dialogue', text: "Marcus, I know this sounds crazy, but I think I found our story."}
+            ];
+            for (const block of initialBlocks) {
+                editor.appendChild(createScriptEditorBlock(block.type, block.text));
+            }
+            // Always have one empty block at the end
+            editor.appendChild(createScriptEditorBlock('action', ''));
+            setTimeout(() => {
+                const first = editor.querySelector('.script-editor-block');
+                if (first) first.focus();
+            }, 50);
+            updateStats();
         }
 
-        // Cycle through formats with Tab
-        function cycleFormat(line) {
-            const formats = ['action', 'scene-heading', 'character', 'dialogue', 'parenthetical'];
-            const currentFormat = getCurrentFormat(line);
-            const currentIndex = formats.indexOf(currentFormat);
-            const nextIndex = (currentIndex + 1) % formats.length;
-            const nextFormat = formats[nextIndex];
-            
-            line.className = `script-line ${nextFormat}`;
-            line.querySelector('.script-input').placeholder = getPlaceholder(nextFormat);
+        function setFormatDropdownToBlock(block) {
+            const type = getBlockType(block);
+            document.getElementById('formatSelect').value = type;
         }
 
-        // Get current format of line
-        function getCurrentFormat(line) {
-            const classes = line.className.split(' ');
-            return classes.find(cls => cls !== 'script-line') || 'action';
-        }
-
-        // Change format from dropdown
-        function changeFormat() {
+        function changeBlockTypeDropdown() {
+            if (!editorEnabled) return;
             const select = document.getElementById('formatSelect');
-            const focusedInput = document.activeElement;
-            if (focusedInput && focusedInput.classList.contains('script-input')) {
-                const line = focusedInput.closest('.script-line');
-                line.className = `script-line ${select.value}`;
-                focusedInput.placeholder = getPlaceholder(select.value);
+            const editor = document.getElementById('scriptEditor');
+            const block = document.activeElement;
+            if (!block || !block.classList || !block.classList.contains('script-editor-block')) return;
+            // Change class
+            SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
+            block.classList.add(select.value);
+            block.setAttribute('data-type', select.value);
+            block.setAttribute('data-placeholder', PLACEHOLDERS[select.value] || '');
+            // Update placeholder status
+            if (block.textContent.trim() === '') block.classList.add('placeholder');
+            else block.classList.remove('placeholder');
+            block.focus();
+            updateStats();
+        }
+
+        function handleScriptEditorKeyDown(e) {
+            if (!editorEnabled) return;
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                cycleBlockType(this);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                splitOrInsertBlock(this);
+            } else if (e.key === 'ArrowUp') {
+                // Move to previous block
+                const prev = this.previousElementSibling;
+                if (prev && prev.classList.contains('script-editor-block')) {
+                    prev.focus();
+                    placeCaretAtEnd(prev);
+                }
+            } else if (e.key === 'ArrowDown') {
+                // Move to next block
+                const next = this.nextElementSibling;
+                if (next && next.classList.contains('script-editor-block')) {
+                    next.focus();
+                    placeCaretAtEnd(next);
+                }
+            } else if (e.key === 'Backspace' && this.textContent.trim() === '') {
+                // If empty, remove block (but keep at least one)
+                const editor = document.getElementById('scriptEditor');
+                if (editor.children.length > 1) {
+                    const prev = this.previousElementSibling;
+                    this.remove();
+                    if (prev && prev.classList.contains('script-editor-block')) {
+                        prev.focus();
+                        placeCaretAtEnd(prev);
+                    }
+                    updateStats();
+                }
             }
         }
 
-        // Scene management
+        function placeCaretAtEnd(el) {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function getBlockType(block) {
+            if (!block || !block.classList) return 'action';
+            for (const type of SCRIPT_BLOCK_TYPES) {
+                if (block.classList.contains(type)) return type;
+            }
+            return 'action';
+        }
+
+        function cycleBlockType(block) {
+            const curr = getBlockType(block);
+            const idx = SCRIPT_BLOCK_TYPES.indexOf(curr);
+            const nextIdx = (idx + 1) % SCRIPT_BLOCK_TYPES.length;
+            SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
+            block.classList.add(SCRIPT_BLOCK_TYPES[nextIdx]);
+            block.setAttribute('data-type', SCRIPT_BLOCK_TYPES[nextIdx]);
+            block.setAttribute('data-placeholder', PLACEHOLDERS[SCRIPT_BLOCK_TYPES[nextIdx]] || '');
+            setFormatDropdownToBlock(block);
+            if (block.textContent.trim() === '') block.classList.add('placeholder');
+            else block.classList.remove('placeholder');
+            updateStats();
+        }
+
+        function splitOrInsertBlock(block) {
+            const text = block.textContent;
+            const sel = window.getSelection();
+            const caretPos = sel.focusOffset;
+            // Split at caret if not at end
+            let before = text, after = '';
+            if (caretPos !== undefined && caretPos < text.length) {
+                before = text.slice(0, caretPos);
+                after = text.slice(caretPos);
+            }
+            block.textContent = before;
+            if (before.trim() === '') block.classList.add('placeholder');
+            else block.classList.remove('placeholder');
+
+            // Default next block type
+            let nextType = 'action';
+            const currType = getBlockType(block);
+            if (currType === 'scene-heading') nextType = 'action';
+            else if (currType === 'action') nextType = 'character';
+            else if (currType === 'character') nextType = 'dialogue';
+            else if (currType === 'dialogue') nextType = 'action';
+            else if (currType === 'parenthetical') nextType = 'dialogue';
+
+            // If after text exists, new block same type
+            if (after.trim() !== '') nextType = currType;
+            const newBlock = createScriptEditorBlock(nextType, after);
+            block.parentNode.insertBefore(newBlock, block.nextSibling);
+            newBlock.focus();
+            placeCaretAtEnd(newBlock);
+            updateStats();
+        }
+
+        function autoFormatScriptBlock(block) {
+            const text = block.textContent.trim();
+            if (getBlockType(block) === 'scene-heading') return; // Don't disturb manual selection
+            if (/^(INT\.|EXT\.|EST\.|INT\/EXT\.)/i.test(text)) {
+                // Scene heading
+                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
+                block.classList.add('scene-heading');
+                block.setAttribute('data-type', 'scene-heading');
+            } else if (/^\(.+\)$/.test(text)) {
+                // Parenthetical
+                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
+                block.classList.add('parenthetical');
+                block.setAttribute('data-type', 'parenthetical');
+            } else if (text === text.toUpperCase() && text.length <= 30 && /^[A-Z0-9\s\-.']+$/.test(text) && text.length > 2) {
+                // Character name (all caps, short)
+                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
+                block.classList.add('character');
+                block.setAttribute('data-type', 'character');
+            } else if (text) {
+                // Default to action
+                SCRIPT_BLOCK_TYPES.forEach(t => block.classList.remove(t));
+                block.classList.add('action');
+                block.setAttribute('data-type', 'action');
+            }
+            setFormatDropdownToBlock(block);
+        }
+
+        // Statistics
+        function updateStats() {
+            const editor = document.getElementById('scriptEditor');
+            const blocks = editor.querySelectorAll('.script-editor-block');
+            let totalWords = 0;
+            blocks.forEach(block => {
+                const text = block.textContent.trim();
+                if (!text) return;
+                const words = text.split(/\s+/).length;
+                totalWords += words;
+            });
+            const totalPages = Math.max(1, Math.ceil(totalWords / 250));
+            document.getElementById('wordCount').textContent = `${totalWords} words`;
+            document.getElementById('pageCount').textContent = `${totalPages} pages`;
+        }
+
+        // Export Modal and Notification logic (unchanged except for using block-based export)
+        // ... (Export logic remains from previous file, but you would need to update collectScriptData to use script-editor-blocks) ...
+
+        // Quick Integration, Scenes, and Export Modal logic (unchanged except for script editor)
         function selectScene(index) {
-            currentScene = index;
             document.querySelectorAll('.scene-item').forEach((item, i) => {
                 item.classList.toggle('active', i === index);
             });
         }
 
         function addNewScene() {
-            const sceneNumber = scenes.length + 1;
-            const newScene = {
-                title: `Scene ${sceneNumber}`,
-                location: "INT./EXT. LOCATION - TIME"
-            };
-            scenes.push(newScene);
-            
             const sceneList = document.getElementById('sceneList');
-            const sceneItem = document.createElement('div');
-            sceneItem.className = 'scene-item';
-            sceneItem.onclick = () => selectScene(scenes.length - 1);
-            sceneItem.innerHTML = `
-                <div class="scene-title">${newScene.title}</div>
-                <div class="scene-location">${newScene.location}</div>
-            `;
-            sceneList.appendChild(sceneItem);
-            
-            // Add new scene heading to editor
-            const editor = document.getElementById('editor');
-            const newSceneLine = createNewLine('scene-heading');
-            newSceneLine.querySelector('.script-input').value = newScene.location;
-            editor.appendChild(newSceneLine);
-            
+            const sceneNumber = sceneList.children.length + 1;
+            const newScene = document.createElement('div');
+            newScene.className = 'scene-item';
+            newScene.innerHTML = `<div class="scene-title">Scene ${sceneNumber}</div><div class="scene-location">INT./EXT. LOCATION - TIME</div>`;
+            newScene.onclick = () => selectScene(sceneNumber - 1);
+            sceneList.appendChild(newScene);
+
+            const editor = document.getElementById('scriptEditor');
+            if (editorEnabled) {
+                const sceneHeading = createScriptEditorBlock('scene-heading', 'INT./EXT. LOCATION - TIME');
+                editor.appendChild(sceneHeading);
+                editor.appendChild(createScriptEditorBlock('action', ''));
+            }
             showNotification('New scene added!');
         }
 
-        // Quick integration functions
+        // Export modal and notification UI (unchanged)
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('statusNotification');
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = message;
+            notification.className = `status-notification show ${isError ? 'error' : ''}`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
         function quickIntegration(type) {
             const integrationMessages = {
                 film: 'Script formatted for film production workflow',
@@ -791,17 +941,15 @@
                 animation: 'Script optimized for animation pipeline',
                 audio: 'Script formatted for audio production'
             };
-            
             showNotification(integrationMessages[type]);
-            
-            // Simulate integration preparation
             setTimeout(() => {
                 openExportModal();
                 selectExportType('collaborative');
             }, 1000);
         }
 
-        // Export modal functions
+        // Export modal logic (slightly updated export to use new blocks)
+        let selectedExportType = null;
         function openExportModal() {
             const modal = document.getElementById('exportModal');
             modal.classList.add('show');
@@ -829,15 +977,10 @@
                 showNotification('Please select an export type', true);
                 return;
             }
-            
             const projectTitle = document.getElementById('projectTitle').value;
             const exportFormat = document.getElementById('exportFormat').value;
             const integrationTarget = document.getElementById('integrationTarget').value;
-            
-            // Collect script data
-            const scriptData = collectScriptData();
-            
-            // Create export package
+            const scriptData = collectScriptDataFromBlocks();
             const exportPackage = {
                 metadata: {
                     title: projectTitle,
@@ -854,10 +997,7 @@
                     collaborationId: generateCollaborationId()
                 }
             };
-            
-            // Simulate export process
             showNotification('Preparing export...');
-            
             setTimeout(() => {
                 downloadExport(exportPackage, exportFormat);
                 showNotification(`Successfully exported for ${integrationTarget}!`);
@@ -865,14 +1005,11 @@
             }, 2000);
         }
 
-        // Collect script data from editor
-        function collectScriptData() {
+        function collectScriptDataFromBlocks() {
             const lines = [];
-            document.querySelectorAll('.script-line').forEach(line => {
-                const textarea = line.querySelector('.script-input');
-                const format = getCurrentFormat(line);
-                const content = textarea.value.trim();
-                
+            document.querySelectorAll('.script-editor-block').forEach(block => {
+                const format = getBlockType(block);
+                const content = block.textContent.trim();
                 if (content) {
                     lines.push({
                         format: format,
@@ -880,31 +1017,27 @@
                     });
                 }
             });
-            
             return {
-                scenes: scenes,
                 lines: lines,
-                statistics: calculateStats()
+                statistics: {
+                    words: lines.map(line => line.content.split(/\s+/).length).reduce((a, b) => a + b, 0),
+                    pages: Math.max(1, Math.ceil(lines.map(line => line.content.split(/\s+/).length).reduce((a, b) => a + b, 0) / 250))
+                }
             };
         }
 
-        // Generate integration endpoints
         function generateAPIEndpoint() {
-            return `https://api.scriptcraft.app/v1/projects/${Math.random().toString(36).substr(2, 9)}`;
+            return `https://api.scriptscribbler.app/v1/projects/${Math.random().toString(36).substr(2, 9)}`;
         }
-
         function generateWebhookUrl() {
-            return `https://hooks.scriptcraft.app/collaboration/${Math.random().toString(36).substr(2, 12)}`;
+            return `https://hooks.scriptscribbler.app/collaboration/${Math.random().toString(36).substr(2, 12)}`;
         }
-
         function generateCollaborationId() {
             return Math.random().toString(36).substr(2, 16);
         }
 
-        // Download export file
         function downloadExport(data, format) {
             let content, filename, mimeType;
-            
             switch (format) {
                 case 'json':
                     content = JSON.stringify(data, null, 2);
@@ -927,7 +1060,6 @@
                     mimeType = 'text/plain';
                     break;
             }
-            
             const blob = new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -939,7 +1071,6 @@
             URL.revokeObjectURL(url);
         }
 
-        // Format conversion functions
         function convertToXML(data) {
             return '<?xml version="1.0" encoding="UTF-8"?>\n<screenplay>\n    <metadata>\n        <title>' + data.metadata.title + '</title>\n        <exportType>' + data.metadata.exportType + '</exportType>\n        <exportedAt>' + data.metadata.exportedAt + '</exportedAt>\n    </metadata>\n    <script>\n        ' + data.script.lines.map(line => '<line format="' + line.format + '">' + escapeXML(line.content) + '</line>').join('\n        ') + '\n    </script>\n    <integration>\n        <apiEndpoint>' + data.integration.apiEndpoint + '</apiEndpoint>\n        <webhookUrl>' + data.integration.webhookUrl + '</webhookUrl>\n        <collaborationId>' + data.integration.collaborationId + '</collaborationId>\n    </integration>\n</screenplay>';
         }
@@ -972,7 +1103,6 @@
                     'parenthetical': '                ',
                     'action': ''
                 }[line.format] || '';
-                
                 return prefix + line.content;
             }).join('\n\n');
         }
@@ -985,51 +1115,12 @@
                       .replace(/'/g, '&#39;');
         }
 
-        // Statistics functions
-        function updateStats() {
-            const stats = calculateStats();
-            document.getElementById('wordCount').textContent = `${stats.words} words`;
-            document.getElementById('pageCount').textContent = `${stats.pages} pages`;
-        }
-
-        function calculateStats() {
-            let totalWords = 0;
-            document.querySelectorAll('.script-input').forEach(textarea => {
-                const text = textarea.value.trim();
-                if (text) {
-                    totalWords += text.split(/\s+/).length;
-                }
-            });
-            
-            const pages = Math.max(1, Math.ceil(totalWords / 250));
-            
-            return {
-                words: totalWords,
-                pages: pages,
-                scenes: scenes.length
-            };
-        }
-
-        // Notification system
-        function showNotification(message, isError = false) {
-            const notification = document.getElementById('statusNotification');
-            const statusText = document.getElementById('statusText');
-            
-            statusText.textContent = message;
-            notification.className = `status-notification show ${isError ? 'error' : ''}`;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Initialize the application
+        // Initialize script editor disabled by default, waits for Test button
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.script-input').forEach(textarea => {
-                autoResize(textarea);
-            });
+            const editor = document.getElementById('scriptEditor');
+            // Do not enable editor until test button is clicked
             updateStats();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98d3740c30e199e6',t:'MTc2MDIzOTE0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
