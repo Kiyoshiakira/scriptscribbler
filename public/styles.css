@@ -108,6 +108,9 @@
             padding: 12px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .scene-item:hover {
@@ -130,6 +133,35 @@
         .scene-location {
             font-size: 12px;
             color: #64748b;
+        }
+
+        .scene-delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s, background 0.2s;
+        }
+
+        .scene-item:hover .scene-delete-btn {
+            opacity: 1;
+        }
+
+        .scene-delete-btn:hover {
+            background: #dc2626;
         }
 
         .add-scene-btn {
@@ -215,6 +247,13 @@
             margin-left: auto;
             font-size: 12px;
             color: #64748b;
+        }
+
+        #scriptEditor {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 250px);
         }
 
         /* New ContentEditable Editor Styles */
