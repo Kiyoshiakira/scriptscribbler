@@ -1,6 +1,18 @@
 # Script Scribbler - Standalone Desktop Application
 
+> 📚 **New to this?** Check out **[INDEX.md](INDEX.md)** for a complete guide to all documentation!
+
 This is the standalone desktop version of Script Scribbler, built with Electron. It runs as a native desktop application on Windows, macOS, and Linux without requiring a web browser.
+
+## Quick Links
+
+- 🚀 **[Beginner's Guide](BEGINNERS_GUIDE.md)** - Start here if you're new!
+- 📦 **[Installation Guide](INSTALLATION.md)** - How to install and run
+- ⚡ **[Quick Start](QUICK_START.md)** - Quick reference
+- 🔄 **[Web vs Standalone](WEB_VS_STANDALONE.md)** - Which version to use?
+- 🏗️ **[Architecture](ARCHITECTURE.md)** - Technical details
+- 📊 **[Diagrams](DIAGRAMS.md)** - Visual architecture
+- 📑 **[Documentation Index](INDEX.md)** - Find the right guide
 
 ## Features
 
