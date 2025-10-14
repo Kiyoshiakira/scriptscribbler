@@ -251,6 +251,10 @@
             block.parentNode.insertBefore(newBlock, block.nextSibling);
             newBlock.focus();
             placeCaretAtEnd(newBlock);
+            
+            // Scroll the new block into view
+            newBlock.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
             updateStats();
         }
 
@@ -333,6 +337,73 @@
             loadSceneIntoEditor(index);
         }
 
+        function deleteScene(index, event) {
+            // Prevent scene selection when clicking delete
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            // Don't allow deleting if only one scene remains
+            if (sceneScripts.length <= 1) {
+                showNotification('Cannot delete the last scene', true);
+                return;
+            }
+            
+            // Save current scene before deleting
+            saveCurrentSceneFromEditor();
+            
+            // Remove the scene from the scripts array
+            sceneScripts.splice(index, 1);
+            
+            // Adjust current scene index if needed
+            if (index < currentSceneIndex) {
+                // Deleted scene is before current, shift index down
+                currentSceneIndex--;
+            } else if (index === currentSceneIndex) {
+                // Deleted the current scene
+                if (currentSceneIndex >= sceneScripts.length) {
+                    // Was the last scene, move to new last scene
+                    currentSceneIndex = sceneScripts.length - 1;
+                }
+                // Otherwise stay at same index (which is now a different scene)
+            }
+            
+            // Rebuild the scene list UI
+            rebuildSceneList();
+            
+            // Load the adjusted current scene
+            loadSceneIntoEditor(currentSceneIndex);
+            
+            showNotification('Scene deleted successfully');
+        }
+
+        function rebuildSceneList() {
+            const sceneList = document.getElementById('sceneList');
+            sceneList.innerHTML = '';
+            
+            // Add all scenes with delete buttons
+            sceneScripts.forEach((_, index) => {
+                const sceneItem = document.createElement('div');
+                sceneItem.className = 'scene-item';
+                if (index === currentSceneIndex) {
+                    sceneItem.classList.add('active');
+                }
+                
+                // Get scene heading from first block if available
+                const sceneHeading = sceneScripts[index].find(block => block.type === 'scene-heading');
+                const locationText = sceneHeading ? sceneHeading.text : 'INT./EXT. LOCATION - TIME';
+                
+                sceneItem.innerHTML = `
+                    <div class="scene-title">Scene ${index + 1}</div>
+                    <div class="scene-location">${locationText}</div>
+                    ${sceneScripts.length > 1 ? `<button class="scene-delete-btn" onclick="deleteScene(${index}, event)" title="Delete scene">×</button>` : ''}
+                `;
+                
+                sceneItem.onclick = () => selectScene(index);
+                sceneList.appendChild(sceneItem);
+            });
+        }
+
         function addNewScene() {
             const sceneList = document.getElementById('sceneList');
             const sceneNumber = sceneList.children.length + 1;
@@ -351,8 +422,13 @@
             // Switch to the new scene
             selectScene(sceneNumber - 1);
             
+            // Rebuild to add delete buttons
+            rebuildSceneList();
+            
             showNotification('New scene added!');
         }
+
+        // Quick Integration, Scenes, and Export Modal logic (updated for multi-scene support)
 
         // Export modal and notification UI (unchanged)
         function showNotification(message, isError = false) {
@@ -575,4 +651,7 @@
             
             // Initialize the script editor with scene content
             initScriptEditor();
+            
+            // Rebuild scene list to add delete buttons
+            rebuildSceneList();
         });
