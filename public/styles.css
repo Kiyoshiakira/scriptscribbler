@@ -91,11 +91,20 @@
             cursor: pointer;
             font-size: 18px;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .options-cog:hover {
             background: rgba(255,255,255,0.2);
             border-color: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        
+        .options-cog:focus {
+            outline: 2px solid rgba(255,255,255,0.5);
+            outline-offset: 2px;
         }
 
         .options-menu {
@@ -142,6 +151,12 @@
 
         .options-menu-item:hover {
             background: #f1f5f9;
+        }
+        
+        .options-menu-item:focus {
+            background: #f1f5f9;
+            outline: 2px solid #4f46e5;
+            outline-offset: -2px;
         }
 
         .options-menu-item .icon {
@@ -1948,6 +1963,85 @@
         .character-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* About Modal Styles */
+        .about-container {
+            padding: 20px;
+        }
+
+        .about-section {
+            margin-bottom: 24px;
+        }
+
+        .about-section h3 {
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .about-section h4 {
+            color: #475569;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .about-section p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .shortcut-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .shortcut-key {
+            background: #1e293b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .about-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Feedback Modal Styles */
+        .feedback-container {
+            padding: 20px;
+        }
+
+        .feedback-textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .feedback-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         /* Accessibility improvements */

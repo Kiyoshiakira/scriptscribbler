@@ -217,6 +217,123 @@
         </div>
     </div>
 
+    <!-- About Modal -->
+    <div class="export-modal" id="aboutModal" style="display: none;">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">ℹ️ About Script Scribbler</h2>
+                <button class="close-modal-btn" onclick="closeAboutModal()">✕</button>
+            </div>
+
+            <div class="about-container">
+                <div class="about-section">
+                    <h3 style="margin-top: 0;">Script Scribbler v2.0</h3>
+                    <p>A professional screenwriting application for writers.</p>
+                </div>
+
+                <div class="about-section">
+                    <h4>Keyboard Shortcuts</h4>
+                    <div class="shortcut-list">
+                        <div class="shortcut-item">
+                            <span class="shortcut-key" id="undoKey">Ctrl+Z</span>
+                            <span>Undo</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key" id="redoKey">Ctrl+Shift+Z</span>
+                            <span>Redo</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key" id="saveKey">Ctrl+S</span>
+                            <span>Save</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key" id="searchKey">Ctrl+F</span>
+                            <span>Search</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key" id="exportKey">Ctrl+E</span>
+                            <span>Export</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key" id="prefsKey">Ctrl+,</span>
+                            <span>Preferences</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key">Tab</span>
+                            <span>Change block type</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key">Enter</span>
+                            <span>New line/block</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span class="shortcut-key">↑/↓</span>
+                            <span>Navigate blocks</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section">
+                    <h4>Features</h4>
+                    <ul style="margin: 8px 0; padding-left: 20px;">
+                        <li>Professional screenplay formatting</li>
+                        <li>Scene organization & management</li>
+                        <li>Character & plot notes</li>
+                        <li>Multiple export formats (PDF, Fountain, XML, JSON)</li>
+                        <li>Auto-save & recovery</li>
+                        <li>Customizable themes & preferences</li>
+                        <li>Drag & drop scene reordering</li>
+                        <li>Advanced search functionality</li>
+                    </ul>
+                </div>
+
+                <div class="about-footer">
+                    <button class="btn btn-primary" onclick="closeAboutModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="export-modal" id="feedbackModal" style="display: none;">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h2 class="export-modal-title">💬 Send Feedback</h2>
+                <button class="close-modal-btn" onclick="closeFeedbackModal()">✕</button>
+            </div>
+
+            <div class="feedback-container">
+                <p style="margin-top: 0; color: #64748b;">We'd love to hear from you! Share your thoughts, suggestions, or report any issues.</p>
+                
+                <div class="setting-group">
+                    <label class="setting-label">Feedback Type</label>
+                    <select class="setting-input" id="feedbackType">
+                        <option value="suggestion">💡 Suggestion</option>
+                        <option value="bug">🐛 Bug Report</option>
+                        <option value="feature">✨ Feature Request</option>
+                        <option value="other">💬 Other</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Your Feedback</label>
+                    <textarea class="setting-input feedback-textarea" id="feedbackText" placeholder="Tell us what you think..." rows="6"></textarea>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Email (optional)</label>
+                    <input type="email" class="setting-input" id="feedbackEmail" placeholder="your@email.com">
+                    <small style="color: #64748b; display: block; margin-top: 4px;">We'll only use this to follow up on your feedback</small>
+                </div>
+
+                <div class="feedback-footer">
+                    <button class="btn btn-secondary" onclick="closeFeedbackModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Top Navigation Bar -->
         <div class="header">
@@ -230,31 +347,35 @@
             </div>
             <div class="header-actions">
                 <div class="options-dropdown">
-                    <button class="options-cog" onclick="toggleOptionsMenu()">⚙️</button>
-                    <div class="options-menu" id="optionsMenu">
-                        <div class="options-menu-item" onclick="openSearchModal()">
+                    <button class="options-cog" onclick="toggleOptionsMenu()" aria-label="Settings Menu" aria-haspopup="true" aria-expanded="false" id="optionsCogBtn">⚙️</button>
+                    <div class="options-menu" id="optionsMenu" role="menu" aria-label="Settings options">
+                        <div class="options-menu-item" onclick="openSearchModal()" role="menuitem" tabindex="0">
                             <span class="icon">🔍</span>
                             <span>Search Project</span>
                         </div>
-                        <div class="options-menu-item" onclick="openImportModal()">
+                        <div class="options-menu-item" onclick="openImportModal()" role="menuitem" tabindex="0">
                             <span class="icon">📥</span>
                             <span>Import Project</span>
                         </div>
-                        <div class="options-menu-item" onclick="openThemeSettings()">
+                        <div class="options-menu-item" onclick="openThemeSettings()" role="menuitem" tabindex="0">
                             <span class="icon">🎨</span>
                             <span>Theme Settings</span>
                         </div>
-                        <div class="options-menu-item" onclick="openPreferences()">
+                        <div class="options-menu-item" onclick="openPreferences()" role="menuitem" tabindex="0">
                             <span class="icon">⚡</span>
                             <span>Preferences</span>
                         </div>
-                        <div class="options-menu-item" onclick="openExportModal()">
+                        <div class="options-menu-item" onclick="openExportModal()" role="menuitem" tabindex="0">
                             <span class="icon">🚀</span>
                             <span>Export & Integrate</span>
                         </div>
-                        <div class="options-menu-item" onclick="openAbout()">
+                        <div class="options-menu-item" onclick="openAbout()" role="menuitem" tabindex="0">
                             <span class="icon">ℹ️</span>
                             <span>About</span>
+                        </div>
+                        <div class="options-menu-item" onclick="openFeedback()" role="menuitem" tabindex="0">
+                            <span class="icon">💬</span>
+                            <span>Send Feedback</span>
                         </div>
                     </div>
                 </div>

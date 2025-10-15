@@ -1591,20 +1591,28 @@
         // Options menu functions
         function toggleOptionsMenu() {
             const menu = document.getElementById('optionsMenu');
-            menu.classList.toggle('show');
+            const btn = document.getElementById('optionsCogBtn');
+            const isShowing = menu.classList.toggle('show');
+            if (btn) {
+                btn.setAttribute('aria-expanded', isShowing);
+            }
         }
 
         // Search Modal Functions
         let searchFilter = 'all';
 
         function openSearchModal() {
-            document.getElementById('searchModal').style.display = 'flex';
+            const modal = document.getElementById('searchModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
             setTimeout(() => document.getElementById('searchInput').focus(), 100);
         }
 
         function closeSearchModal() {
-            document.getElementById('searchModal').style.display = 'none';
+            const modal = document.getElementById('searchModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
             document.getElementById('searchInput').value = '';
             document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">Enter a search term to find content across your project</p>';
         }
@@ -1770,13 +1778,17 @@
 
         // Import Modal Functions
         function openImportModal() {
-            document.getElementById('importModal').style.display = 'flex';
+            const modal = document.getElementById('importModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
             setupImportDropzone();
         }
 
         function closeImportModal() {
-            document.getElementById('importModal').style.display = 'none';
+            const modal = document.getElementById('importModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function setupImportDropzone() {
@@ -1847,12 +1859,16 @@
         let currentTheme = 'default';
 
         function openThemeSettings() {
-            document.getElementById('themeModal').style.display = 'flex';
+            const modal = document.getElementById('themeModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
         }
 
         function closeThemeModal() {
-            document.getElementById('themeModal').style.display = 'none';
+            const modal = document.getElementById('themeModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function setTheme(theme) {
@@ -1876,7 +1892,9 @@
         }
 
         function openPreferences() {
-            document.getElementById('preferencesModal').style.display = 'flex';
+            const modal = document.getElementById('preferencesModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
             
             // Load current preferences into modal
@@ -1887,7 +1905,9 @@
         }
 
         function closePreferences() {
-            document.getElementById('preferencesModal').style.display = 'none';
+            const modal = document.getElementById('preferencesModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
             savePreferences();
             showNotification('Preferences saved!');
         }
@@ -1911,35 +1931,62 @@
         }
 
         function openAbout() {
+            const modal = document.getElementById('aboutModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+            document.getElementById('optionsMenu').classList.remove('show');
+            
+            // Update keyboard shortcuts for Mac vs PC
             const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
             const ctrlKey = isMac ? 'Cmd' : 'Ctrl';
-            const message = `Script Scribbler v2.0 - A professional screenwriting application
-
-Keyboard Shortcuts:
-• ${ctrlKey}+Z: Undo
-• ${ctrlKey}+Shift+Z or ${ctrlKey}+Y: Redo
-• ${ctrlKey}+S: Save
-• ${ctrlKey}+F: Search
-• ${ctrlKey}+E: Export
-• ${ctrlKey}+,: Preferences
-• ${ctrlKey}+1-5: Switch tabs
-• Tab: Change block type
-• Enter: New line/block
-• ↑/↓: Navigate blocks
-
-Features:
-✓ Undo/Redo support
-✓ Auto-save every 30 seconds
-✓ Resizable sidebar
-✓ Drag-and-drop scene reordering
-✓ Visual block type indicators
-✓ Note pinning and scene linking
-✓ Enhanced search with highlighting
-✓ Keyboard navigation
-✓ Customizable preferences`;
             
-            alert(message);
+            document.getElementById('undoKey').textContent = `${ctrlKey}+Z`;
+            document.getElementById('redoKey').textContent = `${ctrlKey}+Shift+Z`;
+            document.getElementById('saveKey').textContent = `${ctrlKey}+S`;
+            document.getElementById('searchKey').textContent = `${ctrlKey}+F`;
+            document.getElementById('exportKey').textContent = `${ctrlKey}+E`;
+            document.getElementById('prefsKey').textContent = `${ctrlKey}+,`;
+        }
+
+        function closeAboutModal() {
+            const modal = document.getElementById('aboutModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function openFeedback() {
+            const modal = document.getElementById('feedbackModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
+        }
+
+        function closeFeedbackModal() {
+            const modal = document.getElementById('feedbackModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+            // Reset form
+            document.getElementById('feedbackType').value = 'suggestion';
+            document.getElementById('feedbackText').value = '';
+            document.getElementById('feedbackEmail').value = '';
+        }
+
+        function submitFeedback() {
+            const type = document.getElementById('feedbackType').value;
+            const text = document.getElementById('feedbackText').value.trim();
+            const email = document.getElementById('feedbackEmail').value.trim();
+
+            if (!text) {
+                alert('Please enter your feedback before submitting.');
+                return;
+            }
+
+            // In a real application, this would send to a backend
+            // For now, we'll just show a success message
+            console.log('Feedback submitted:', { type, text, email });
+            
+            showNotification('Thank you for your feedback! 💙');
+            closeFeedbackModal();
         }
 
         // Close options menu when clicking outside
@@ -1948,7 +1995,20 @@ Features:
             const optionsCog = document.querySelector('.options-cog');
             if (optionsMenu && !optionsMenu.contains(e.target) && e.target !== optionsCog) {
                 optionsMenu.classList.remove('show');
+                const btn = document.getElementById('optionsCogBtn');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
             }
+        });
+
+        // Add keyboard support for menu items
+        document.addEventListener('keydown', function(e) {
+            const menuItems = document.querySelectorAll('.options-menu-item');
+            menuItems.forEach(item => {
+                if (document.activeElement === item && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    item.click();
+                }
+            });
         });
 
         // Notes system functions
