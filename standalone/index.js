@@ -1602,13 +1602,17 @@
         let searchFilter = 'all';
 
         function openSearchModal() {
-            document.getElementById('searchModal').style.display = 'flex';
+            const modal = document.getElementById('searchModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
             setTimeout(() => document.getElementById('searchInput').focus(), 100);
         }
 
         function closeSearchModal() {
-            document.getElementById('searchModal').style.display = 'none';
+            const modal = document.getElementById('searchModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
             document.getElementById('searchInput').value = '';
             document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">Enter a search term to find content across your project</p>';
         }
@@ -1774,13 +1778,17 @@
 
         // Import Modal Functions
         function openImportModal() {
-            document.getElementById('importModal').style.display = 'flex';
+            const modal = document.getElementById('importModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
             setupImportDropzone();
         }
 
         function closeImportModal() {
-            document.getElementById('importModal').style.display = 'none';
+            const modal = document.getElementById('importModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function setupImportDropzone() {
@@ -1851,12 +1859,16 @@
         let currentTheme = 'default';
 
         function openThemeSettings() {
-            document.getElementById('themeModal').style.display = 'flex';
+            const modal = document.getElementById('themeModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
         }
 
         function closeThemeModal() {
-            document.getElementById('themeModal').style.display = 'none';
+            const modal = document.getElementById('themeModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function setTheme(theme) {
@@ -1880,7 +1892,9 @@
         }
 
         function openPreferences() {
-            document.getElementById('preferencesModal').style.display = 'flex';
+            const modal = document.getElementById('preferencesModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
             document.getElementById('optionsMenu').classList.remove('show');
             
             // Load current preferences into modal
@@ -1891,7 +1905,9 @@
         }
 
         function closePreferences() {
-            document.getElementById('preferencesModal').style.display = 'none';
+            const modal = document.getElementById('preferencesModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
             savePreferences();
             showNotification('Preferences saved!');
         }
